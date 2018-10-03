@@ -1,0 +1,19 @@
+sceneSetups:
+- path: Assets/Scenes/Level 1.unity
+  isLoaded: 1
+  isActive: 0
+- path: Assets/Scenes/Continent.unity
+  isLoaded: 1
+  isActive: 1
+- path: Assets/Scenes/Main Characters.unity
+  isLoaded: 1
+  isActive: 0
+- path: Assets/Scenes/Main Scene.unity
+  isLoaded: 1
+  isActive: 0
+- path: Assets/Scenes/Navigation Mesh.unity
+  isLoaded: 1
+  isActive: 0
+- path: Assets/Scenes/Dice.unity
+  isLoaded: 1
+  isActive: 0
