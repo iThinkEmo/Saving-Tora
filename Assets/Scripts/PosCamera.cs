@@ -5,9 +5,10 @@ using UnityEngine;
 public class PosCamera : MonoBehaviour {
 
 	public Animator cameraAnim;
+	//public PlayerFollow script;
 
 	void Awake(){
-		DontDestroyOnLoad(this);
+		//DontDestroyOnLoad(this);
 	}
 	
 	// Use this for initialization

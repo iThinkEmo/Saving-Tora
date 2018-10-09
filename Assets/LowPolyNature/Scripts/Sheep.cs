@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-
+/*
 public class Sheep : MonoBehaviour
 {
     private NavMeshAgent mAgent;
@@ -98,3 +98,4 @@ public class Sheep : MonoBehaviour
 
     }
 }
+*/

@@ -1,10 +1,13 @@
 sceneSetups:
-- path: Assets/Scenes/Level 1.unity
+- path: Assets/Scenes/Dice.unity
   isLoaded: 1
   isActive: 0
 - path: Assets/Scenes/Continent.unity
   isLoaded: 1
-  isActive: 1
+  isActive: 0
+- path: Assets/Scenes/Level 1.unity
+  isLoaded: 1
+  isActive: 0
 - path: Assets/Scenes/Main Characters.unity
   isLoaded: 1
   isActive: 0
@@ -14,6 +17,15 @@ sceneSetups:
 - path: Assets/Scenes/Navigation Mesh.unity
   isLoaded: 1
   isActive: 0
-- path: Assets/Scenes/Dice.unity
+- path: Assets/Scenes/Level 2.unity
   isLoaded: 1
   isActive: 0
+- path: Assets/Scenes/Level 3.unity
+  isLoaded: 1
+  isActive: 0
+- path: Assets/Scenes/Level 4.unity
+  isLoaded: 1
+  isActive: 0
+- path: Assets/Scenes/Cameras.unity
+  isLoaded: 1
+  isActive: 1

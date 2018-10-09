@@ -28,25 +28,25 @@ public class SelectNode : MonoBehaviour {
 			}else{
 				if (Input.GetKeyDown(KeyCode.UpArrow)){
 					if (MoveSucceded(saviour, 0)){
-						saviour.Walk(saviour.node, 0);
+						saviour.Walk(saviour.currentNode, 0);
 						Debug.Log(spacesLeft);
 					}
 				}
 				else if (Input.GetKeyDown(KeyCode.DownArrow)){
 					if (MoveSucceded(saviour, 1)){
-						saviour.Walk(saviour.node, 1);
+						saviour.Walk(saviour.currentNode, 1);
 						Debug.Log(spacesLeft);
 					}
 				}
 				else if (Input.GetKeyDown(KeyCode.RightArrow)){
 					if (MoveSucceded(saviour, 2)){
-						saviour.Walk(saviour.node, 2);
+						saviour.Walk(saviour.currentNode, 2);
 						Debug.Log(spacesLeft);
 					}
 				}
 				else if (Input.GetKeyDown(KeyCode.LeftArrow)){
 					if (MoveSucceded(saviour, 3)){
-						saviour.Walk(saviour.node, 3);
+						saviour.Walk(saviour.currentNode, 3);
 						Debug.Log(spacesLeft);
 					}
 				}
@@ -56,7 +56,7 @@ public class SelectNode : MonoBehaviour {
 	}
 
 	private bool MoveSucceded(Saviour saviour, int i) {
-		int current_node = saviour.node;
+		int current_node = saviour.currentNode;
 		return NodesMap.nodesArray[current_node, i] != 0;
 	}
 }

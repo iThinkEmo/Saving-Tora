@@ -40,6 +40,8 @@
         "**/*.cubemap":true,
         "**/*.flare":true,
         "**/*.mat":true,
+        "**/*.anim":true,
+        "**/*.controller":true,
         "**/*.meta":true,
         "**/*.prefab":true,
         "**/*.unity":true,

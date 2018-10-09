@@ -31,3 +31,5 @@ ehthumbs.db
 [Bb]uild
 sysinfo.txt
 *.stackdump
+
+Assets/Island/Textures/Materials/Water.mat
