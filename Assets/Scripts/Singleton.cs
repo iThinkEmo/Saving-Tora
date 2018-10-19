@@ -55,12 +55,12 @@ public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
     /// there is no need to search the object in the scene (lookup in getter).
     /// If there is already an instance in the scene, remove this script from the GameObject
     /// </summary>
-    private void Awake()
+    private void Awake() //este se activa igual despues de start
     {
         if (instance == null)
         {
             instance = this as T;
-            DontDestroyOnLoad ( gameObject );
+            DontDestroyOnLoad ( gameObject ); //se especifica que no se debe de eliminar este objeto al cargar la escena
             Init();
         }
         else

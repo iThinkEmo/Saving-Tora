@@ -8,4 +8,52 @@ EditorBuildSettings:
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
+  - enabled: 1
+    path: Assets/Scenes/EscenaGameManagers/GameManager.unity
+    guid: 8b7d59db90118ce4caed71ae519bad09
+  - enabled: 1
+    path: Assets/Scenes/MenuPrincipal/PantallaPrincipal.unity
+    guid: 4ea121884e6cedf478c598a2ab1a8fcf
+  - enabled: 1
+    path: Assets/Scenes/PantallaCargandoLoadingScreen/PantallaCargandoLoadingScreen.unity
+    guid: 89f0bcf2bd4630248899c26bd6e3cdb9
+  - enabled: 1
+    path: Assets/Scenes/PantallaSeleccionPersonajes/SeleccionPersonajeAventura.unity
+    guid: 7a38f5480c822224f83d8040e3347813
+  - enabled: 1
+    path: Assets/Scenes/PantallaVideoHistoriaDelJuego/EscenaVideoHistoriaDelJuego.unity
+    guid: 98ecbeb185ae45d44926432c58b9f89d
+  - enabled: 1
+    path: Assets/Scenes/FightScene/FightScene.unity
+    guid: cd5af8d4e0bb9ce4484172187b72a465
+  - enabled: 1
+    path: Assets/Scenes/Main Characters 1.unity
+    guid: f097462822ea0854e806f3cca578e708
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: Assets/Scenes/Main Characters.unity
+    guid: 31a56447c1ed5ca49b8ee1895bd2d4c7
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   m_configObjects: {}

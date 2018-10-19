@@ -1,0 +1,27 @@
+Author: Karlo 
+
++The For humans means that this format is table-based,
+    so humans can understand it.
++Last number column is just for reference.
+
++-------------------------------------+-------+--------+-------------------------------------------------------+
+|              Item                   |  Dmg  |  Cost  |                      Description                      |        
++-------------------------------------+-------+--------+-------------------------------------------------------+
+|X.-Basic Magic                       |   5   |    0   |  It is almost like no magic...                        |0
+|0.-Fire                              |  20   |    0   |  It burns a little.                                   |0
+|1.-Big Fire                          |  50   |    0   |  It burns a lot.                                      |0
+|2.-Death Fire                        |  70   |    0   |  It burns so much that it might kill somebody.        |0
+|3.-God Fire                          | 100   |    0   |  It burns like a god.                                 |0
+|4.-Blizzard                          |  20   |    0   |  It cools a little.                                   |0
+|5.-Big Blizzard                      |  50   |    0   |  It cools a lot.                                      |0
+|6.-Death Blizzard                    |  70   |    0   |  It cools so much that it might kill somebody.        |0
+|7.-God Blizzard                      | 100   |    0   |  It cools like a god.                                 |0
+|8.-Shock                             |  20   |    0   |  It electrocutes a little.                            |0
+|9.-Big Shock                         |  50   |    0   |  It electrocutes a lot.                               |0
+|10.-Death Shock                      |  70   |    0   |  It electrocutes so much that it might kill somebody. |0
+|11.-God Shock                        | 100   |    0   |  It electrocutes like a god.                          |0
+|12.-Natura                           |  20   |    0   |  It calms a little.                                   |0
+|13.-Big Natura                       |  50   |    0   |  It calms a lot.                                      |0
+|14.-Death Natura                     |  70   |    0   |  It calms so much that it might kill somebody.        |0
+|15.-God Natura                       | 100   |    0   |  It calms like a god.                                 |0
++-------------------------------------+-------+--------+-------------------------------------------------------+

@@ -3,7 +3,21 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - GameManager
+  - cancionMenu
+  - Path
+  - Node
+  - Virtual Camera 2
+  - Characters
+  - Croc
+  - HellSlammer
+  - Silena
+  - TheEye
+  - RiceMan
+  - Witch
+  - Samurai
+  - Undead
   layers:
   - Default
   - TransparentFX

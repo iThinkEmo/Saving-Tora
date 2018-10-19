@@ -6,7 +6,9 @@ public class csDemoSceneCode : MonoBehaviour
     public string[] EffectNames;
     public string[] Effect2Names;
     public Transform[] Effect;
+#pragma warning disable CS0618 // 'GUIText' está obsoleto: 'This component is part of the legacy UI system and will be removed in a future release.'
     public GUIText Text1;
+#pragma warning restore CS0618 // 'GUIText' está obsoleto: 'This component is part of the legacy UI system and will be removed in a future release.'
     int i = 0;
     int a = 0;
     

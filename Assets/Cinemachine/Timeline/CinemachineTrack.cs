@@ -7,7 +7,11 @@ namespace Cinemachine.Timeline
 {
     [Serializable]
     [TrackClipType(typeof(CinemachineShot))]
+#pragma warning disable CS0618 // 'TrackMediaType' está obsoleto: 'TrackMediaType has been deprecated. It is no longer required, and will be removed in a future release.'
+#pragma warning disable CS0618 // 'TimelineAsset.MediaType' está obsoleto: 'MediaType has been deprecated. It is no longer required, and will be removed in a future release.'
     [TrackMediaType(TimelineAsset.MediaType.Script)]
+#pragma warning restore CS0618 // 'TimelineAsset.MediaType' está obsoleto: 'MediaType has been deprecated. It is no longer required, and will be removed in a future release.'
+#pragma warning restore CS0618 // 'TrackMediaType' está obsoleto: 'TrackMediaType has been deprecated. It is no longer required, and will be removed in a future release.'
     [TrackBindingType(typeof(CinemachineBrain))]
     [TrackColor(0.53f, 0.0f, 0.08f)]
     public class CinemachineTrack : TrackAsset

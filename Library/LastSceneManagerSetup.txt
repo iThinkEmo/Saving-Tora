@@ -1,31 +1,31 @@
 sceneSetups:
-- path: Assets/Scenes/Dice.unity
-  isLoaded: 1
-  isActive: 0
-- path: Assets/Scenes/Continent.unity
-  isLoaded: 1
-  isActive: 0
-- path: Assets/Scenes/Level 1.unity
-  isLoaded: 1
-  isActive: 0
-- path: Assets/Scenes/Main Characters.unity
-  isLoaded: 1
-  isActive: 0
-- path: Assets/Scenes/Main Scene.unity
-  isLoaded: 1
-  isActive: 0
-- path: Assets/Scenes/Navigation Mesh.unity
-  isLoaded: 1
-  isActive: 0
-- path: Assets/Scenes/Level 2.unity
-  isLoaded: 1
-  isActive: 0
-- path: Assets/Scenes/Level 3.unity
-  isLoaded: 1
-  isActive: 0
-- path: Assets/Scenes/Level 4.unity
-  isLoaded: 1
-  isActive: 0
-- path: Assets/Scenes/Cameras.unity
+- path: Assets/Scenes/EscenaGameManagers/GameManager.unity
   isLoaded: 1
   isActive: 1
+- path: Assets/Scenes/Continent.unity
+  isLoaded: 0
+  isActive: 0
+- path: Assets/Scenes/Dice.unity
+  isLoaded: 0
+  isActive: 0
+- path: Assets/Scenes/Level 1.unity
+  isLoaded: 0
+  isActive: 0
+- path: Assets/Scenes/Level 2.unity
+  isLoaded: 0
+  isActive: 0
+- path: Assets/Scenes/Level 3.unity
+  isLoaded: 0
+  isActive: 0
+- path: Assets/Scenes/Level 4.unity
+  isLoaded: 0
+  isActive: 0
+- path: Assets/Scenes/Navigation Mesh.unity
+  isLoaded: 0
+  isActive: 0
+- path: Assets/Scenes/Main Scene.unity
+  isLoaded: 0
+  isActive: 0
+- path: Assets/Scenes/Main Characters 1.unity
+  isLoaded: 1
+  isActive: 0

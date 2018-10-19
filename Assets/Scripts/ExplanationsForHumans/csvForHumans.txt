@@ -1,0 +1,10 @@
+The store is operated by csv:
+
+//magia.csv
+Magic:        "Name", "Desc",Power,Cost
+
+//itemno.csv
+Item:         "Name","Desc", Itemnumber,Perks, Cost
+
+//equipo.csv
+Equipment:    "Name",area, level,Perks, Cost

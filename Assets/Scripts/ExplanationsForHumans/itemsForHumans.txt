@@ -1,0 +1,40 @@
+Author: Karlo 
+
++The For humans means that this format is table-based,
+    so humans can understand it.
++Last number column is just for reference.
+
++-------------------------------------+------+------+------+------+------+---------------------------------------------+
+|              Item                   |  HP  |  MP  |  AP  |  DP  |  SP  |                  Description                |        
++-------------------------------------+------+------+------+------+------+---------------------------------------------+
+|0.-Trash                             | -10  |   0  |   0  |   0  |   0  | Some trash you found on the floor.          |0
+|1.-Food                              |  10  |   0  |   0  |   0  |   0  | Some food, looks stale.                     |1
+|2.-Great Food                        |  30  |   0  |   0  |   0  |   0  | Some good looking food.                     |2
+|3.-Delicious Food                    |  70  |   0  |   0  |   0  |   0  | Finally something delicious.                |3
+|4.-A Delicacy                        | 100  |   0  |   0  |   0  |   0  | Looks expensive, but really tasty.          |4
+|5.-Pizza                             | 150  |   0  |   0  |   0  |   0  | Greatest food ever!                         |5
+|6.-Almost-Empty Machine Core         |   0  |   5  |   0  |   0  |   0  | Was filled with magic... Not so much now.   |6
+|7.-Half Full Machine Core            |   0  |  10  |   0  |   0  |   0  | This one is half full. Or half empty...     |7
+|8.-Almost-Full Machine Core          |   0  |  15  |   0  |   0  |   0  | Nearly filled, you can smell the magic.     |8
+|9.-Full Machine Core                 |   0  |  25  |   0  |   0  |   0  | Fully loaded and ready to be consumed.      |9
+|10.-Big Machine Core                 |   0  |  30  |   0  |   0  |   0  | So big you can already feel the magic.      |10
+|11.-A Rock                           |   0  |   0  |   5  |   0  |   0  | It's a rock.                                |11
+|12.-Two Rocks                        |   0  |   0  |  10  |   0  |   0  | What's better than one rock?                |12
+|13.-The Same Rock, But With A Hat    |   0  |   0  |  15  |   0  |   0  | So cute.                                    |13
+|14.-Two Rocks With Hats              |   0  |   0  |  25  |   0  |   0  | OMG look at their little hats!              |14
+|15.-Two Really Elegant Rocks         |   0  |   0  |  30  |   0  |   0  | Seriously, they look so handsome, and cute! |15
+|16.-A bit Of Defence Stew            |   2  |   0  |   0  |   5  |   0  | It's like a spoonful...                     |16
+|17.-Some Defence Stew                |   4  |   0  |   0  |  10  |   0  | Meh, at least it's not a spoonful.          |17
+|18.-A Bowl Defence Stew              |  10  |   0  |   0  |  15  |   0  | Some decent sized stew.                     |18
+|19.-A Pot Of Defence Stew            |  20  |   0  |   0  |  25  |   0  | A bit too much but ok, It looks yummy.      |19
+|20.-Defence Stew Supreme             |  30  |   0  |   0  |  30  |   0  | You are not gonna be able to eat all that.  |20
+|21.-OK Shoelaces                     |   0  |   0  |   0  |   0  |   5  | OK.                                         |21
+|22.-Nice Shoelaces                   |   0  |   0  |   0  |   0  |  10  | Nice.                                       |22
+|23.-Great Shoelaces                  |   0  |   0  |   0  |   0  |  15  | Great.                                      |23
+|24.-Shoelaces That Look Like Snakes  |   0  |   0  |   0  |   0  |  25  | They should be called pythons.              |24
+|25.-Shoelaces With Flames Painted On |   0  |   0  |   0  |   0  |  30  | Because anything with flames on, is faster. |25
+|26.-Astral Food                      |   0  |   0  |  15  |  20  |  20  | Some out of this world food.                |26
+|27.-Abstract Food                    |   0  |   0  |   0  |   0  |   0  | This looks like a melted clock...           |27
+|28.-Cubist Food                      |  20  |  15  |  30  |   0  |   0  | So blue. Why is it so blue?                 |28
+|29.-The Ear Af An Artist             |-100  |  50  |  50  |  30  |   0  | I wouldnt eat this if I were you.           |29
++-------------------------------------+------+------+------+------+------+---------------------------------------------+

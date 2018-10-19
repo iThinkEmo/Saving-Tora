@@ -42,7 +42,8 @@ public class Dice : MonoBehaviour{
 		int side = Random.Range(6, 7);
 		anim.SetInteger("side", side);
 
-		SelectNode.spacesLeft = side;
+		//SelectNode.spacesLeft = side;
+		SelectNode.spacesLeft = 12;
 
 		Vector3 force = Vector3.up * Random.Range(360.0f, 380.0f);
 		rb.AddForce(force);
