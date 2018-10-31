@@ -106,7 +106,7 @@ namespace CharacterSelector.Scripts
             }
             else { //todos los jugadores ya seleccionaron un personaje
                 //NOTA IMPORTANTE: TODA LA INFORMACION DE LA SELECCION DE LOS PERSONAJES
-                //SE ENCUENTA EN EL GAME MANAGER EN EL ATRIBUTO userNameCharacter
+                //SE ENCUENTA EN EL GAME MANAGER EN EL ATRIBUTO playerDictionary
                 //en el siguiente debug.log la clase gamemanager se indico que imprimiera
                 //como mensaje la lsita con esta informacion:
                 Debug.Log(_gameManagerDelJuego);

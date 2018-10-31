@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 public class GameManager : Singleton<GameManager> {
 
@@ -14,6 +15,10 @@ public class GameManager : Singleton<GameManager> {
 	public PlayerUber witch;
 	public PlayerUber samurai;
 	public PlayerUber ricemonk;
+
+    public Saviour currentSaviour;
+
+    public bool firstLoadMainScene = true;
 
 
     // How many players are there
@@ -28,14 +33,17 @@ public class GameManager : Singleton<GameManager> {
 
     // Dictionary that will save the 'Player': n,
     // selected in the 'Select your characters' screen
-    public Dictionary<string, int> userNameCharacter = new Dictionary<string, int>(5);
+    public Dictionary<string, int> playerDictionary = new Dictionary<string, int>(5);
     public Dictionary<int, string> idCharacter = new Dictionary<int, string>
         {
             { 1, "Witch" },
-            { 2, "Riceman" },
+            { 2, "RiceMan" },
             { 3, "Samurai" },
             { 4, "Undead" }
         };
+
+    public string[] orderedPlayers;
+    public int[] orderedPlayersID;
 
 
     //Este atributo se utiliza en la pantalla de seleccion de personajes 
@@ -59,15 +67,52 @@ public class GameManager : Singleton<GameManager> {
 
 
 
-    public static int currentPlayer = 1, index = 0;
+    public static int currentPlayer = 1, index = 1;
     #endregion
 
     #region ***Métodos***
     protected virtual void Start() {
-        //Se selecciona como primer jugador el elemento que esta al inicio de la lista.
-        //El orden es como se van registrando es su turno
-        //currentPlayer =Int32.Parse(ListaDeListasUsuarioPersonajesSeleccionados[index][1]);
+        //primer jsonhb para cargar escena principal :v
+        StatusMaker mk = new StatusMaker();
+        //Deberia recibir posiciones y rotaciones iniciales de los players men
+        // Mandar posiciones y rotaciones de los personajes 
+        // Consultar status maker para ver que recibe este método
+        //mk.setInitialScreenjson();
 
+      
+    }
+
+    //para obtener el numero de area basada en el node en el que esta
+    /// <summary>
+    /// Regresa un entero (número de área / nivel) dependiendo el nodo que recibe
+    /// </summary>
+    public int GetAreaBasedOnNodesPos(int node)
+    {
+        return 0;
+    }
+
+    /// <summary>
+    /// Determina mediante un shuffle el orden en el que jugarán los jugadores
+    /// </summary>
+    public void WhoStarts(){
+        orderedPlayers = playerDictionary.Keys.ToArray();
+        orderedPlayersID = playerDictionary.Values.ToArray();
+        for (int i = 0; i < Random.Range(1, 5); i ++){
+        //for (int i = 0; i < 1; i ++){
+            orderedPlayers = LeftShift(orderedPlayers);
+            orderedPlayersID = LeftShift(orderedPlayersID);
+        }
+        currentPlayer = playerDictionary[orderedPlayers[0]];
+    }
+
+    static string[] LeftShift(string[] array){            
+        // all elements except for the first one... and at the end, the first one. to array.
+        return array.Skip(1).Concat(array.Take(1)).ToArray();
+    }
+
+    static int[] LeftShift(int[] array){            
+        // all elements except for the first one... and at the end, the first one. to array.
+        return array.Skip(1).Concat(array.Take(1)).ToArray();
     }
 
     //Método que regresa el jugador actual
@@ -75,25 +120,15 @@ public class GameManager : Singleton<GameManager> {
         return currentPlayer;
     }
 
-    //Metodo que cambia el jugador
-    public int nextPlayer() {
-        return 0;
-        // Falta crear una variable en donde se guarde en qué orden quedaron los personajes al inicio
-        // de tal forma que List[] = ["Player2", "Player3", "Player4"] contenga los Key del diccionario userNameCharacter.
+    // Regresa el Saviour actual
+    public Saviour GetCurrentSaviour() {
+        return currentSaviour;
+    }
 
-        // //1. se aumenta el index
-        // index++;
-        // //2. Si es igual al numero de jugadores se regresa al primer jugador
-        // if (index == ListaDeListasUsuarioPersonajesSeleccionados.Count()) {
-        // 	index = 0;
-        // 	currentPlayer = Int32.Parse(ListaDeListasUsuarioPersonajesSeleccionados[index][1]);
-        // 	return currentPlayer;
-        // //3. De lo contrario se va al siguiente de la lista
-        // } else {
-        // 	currentPlayer = userNameCharacter["asfgjkl"];
-        // 	currentPlayer = Int32.Parse(ListaDeListasUsuarioPersonajesSeleccionados[index][1]);
-        // 	return currentPlayer;
-        // }
+    //Metodo que cambia el jugador
+    public void nextPlayer() {
+        orderedPlayersID = LeftShift(orderedPlayersID);
+        currentPlayer = orderedPlayersID[0];
     }
 
     /// <summary>
@@ -101,19 +136,17 @@ public class GameManager : Singleton<GameManager> {
     /// con los valores de sus respectivas clases
     /// </summary>
     public void instanciarPersonajes(){
-		Debug.Log("entrooo");
-		foreach (KeyValuePair<string, int> entry in userNameCharacter){
+		foreach (KeyValuePair<string, int> entry in playerDictionary){
 			int characterType = entry.Value;
 			switch (characterType){
 				case 1:
 					witch = new PlayerUber(2);
-					Debug.Log(witch.maxhp);
 					break;
 				case 2:
-					samurai = new PlayerUber(3);
+					ricemonk = new PlayerUber(4);
 					break;
 				case 3:
-					ricemonk = new PlayerUber(4);
+					samurai = new PlayerUber(3);
 					break;
 				case 4:
 					undead = new PlayerUber(1);
@@ -121,39 +154,60 @@ public class GameManager : Singleton<GameManager> {
 				default:
 					break;
 			}
-			Debug.Log(entry.Key + ", " + entry.Value);
 		}
 	}
+
+    public PlayerUber PlayerUberSaviour(){
+        PlayerUber player;
+        switch (currentPlayer){
+            case 1:
+                player = witch;
+                break;
+            case 2:
+                player = ricemonk;
+                break;
+            case 3:
+                player = samurai;
+                break;
+            case 4:
+                player = undead;
+                break;
+            default:
+                player = witch;
+                break;
+        }
+        return player;
+    }
 
 
     #region ***Métodos para manipulación y consulta de lista que tiene la información de seleccion personaje-usuario****
     //Descripción: Método de instancia útil para poder agregar
     //la informacicon de seleccion personaje-usuario en el diccionario de la clase.
     public void AddSelectUserCharacter(string name, int characterId) {
-        this.userNameCharacter.Add(name, characterId);
+        this.playerDictionary.Add(name, characterId);
     }
 
     //Descripción: Método de instancia útil para poder  eliminar 
     //el ultimo elemento agregado de la lista de seleccion personaje-usuario
     public void DeleteSelectedUserCharacter(string name) {
-        this.userNameCharacter.Remove(name);
+        this.playerDictionary.Remove(name);
     }
 
     //Descripción: Permite el reinicio del diccionario para una nueva aventura, por lo que 
     //evita que se agreguen los personajes los personajes de la aventura pasada.
     public void ResetSelectedUserCharacter() {
-        this.userNameCharacter = new Dictionary<string, int>(5);
+        this.playerDictionary = new Dictionary<string, int>(5);
     }
 
 
     //Descripción: Permite buscar en el diccionario si ya exitse el valor indicado 
     public bool VerificarExistenciaCharacterEnDiccionario(int identificadorPersonaje) {
-        return this.userNameCharacter.Any(elemento => elemento.Value == identificadorPersonaje);
+        return this.playerDictionary.Any(elemento => elemento.Value == identificadorPersonaje);
     }
 
 
     public bool ExisteLaLlaveEnDiccionario(string nombre) {
-        return this.userNameCharacter.ContainsKey(nombre);
+        return this.playerDictionary.ContainsKey(nombre);
 
     }
 
@@ -185,7 +239,7 @@ public class GameManager : Singleton<GameManager> {
     public override string ToString()
     {
         StringBuilder mensaje = new StringBuilder("");
-        foreach (KeyValuePair<string, int> entry in userNameCharacter) {
+        foreach (KeyValuePair<string, int> entry in playerDictionary) {
             mensaje.Append("Selección de personaje <NombreUsuario, #Personaje>: " + "<" + entry.Key + ", " + entry.Value + ">\n");
         }
         return mensaje.ToString();

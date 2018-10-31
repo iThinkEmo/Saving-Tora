@@ -11,37 +11,39 @@ class StatusMaker
     string filenamec;
     string path1;
     string jsonString;
-    string[] monsterFiles = { "P1Monster.json" , "P2Monster.json" , "P3Monster.json" , "P4Monster.json" };
+    string[] monsterFiles = { "P1Monster.json", "P2Monster.json", "P3Monster.json", "P4Monster.json" };
+    static string[] playerMainFiles = { "P1.json", "P2.json", "P3.json", "P4.json" };
 
     //Constructor to Know its a fight one
     //cP = currentPlayer: To know which character to spawn
     //1:Witch, 2:Samurai,3:Undead,4: RiceMonk
     //a  = Area         : To know which monster to spawn based on the area
-    //tOF= Type of Fight: 0:Normal, 1:BOSS, 2:ULTRABOSS
+    //tOF= Type of Fight: 0:Normal, 1:BOSS, 2:ULTRABOSS, 3 store
     public StatusMaker(int cP, int a, int tOF)
     {
         fStat = new StatusForFight(cP, a, tOF);
     }
 
     public StatusMaker()
-    {;}
+    {; }
 
     //To make and post the JSON
     public void MakeAndPostJSONFight()
     {
         filenamec = "statusFight.json";
         path1 = Application.persistentDataPath + "/" + filenamec;
-        jsonString = JsonConvert.SerializeObject(fStat);
+        jsonString = JsonConvert.SerializeObject(fStat, Formatting.Indented);
         Debug.Log(path1);
         System.IO.File.WriteAllText(path1, jsonString);
     }
 
+
     //To Set the JSON for latter continue of the fight
-    public void ToprepareTheContinuedFight(int playerNum)
+    public void SetMonster(int playerNum, EnemyClass e1)
     {
         filenamec = getMonsterFile(playerNum);
         path1 = Application.persistentDataPath + "/" + filenamec;
-        jsonString = JsonConvert.SerializeObject(fStat);
+        jsonString = JsonConvert.SerializeObject(e1, Formatting.Indented);
         Debug.Log(path1);
         System.IO.File.WriteAllText(path1, jsonString);
     }
@@ -55,7 +57,7 @@ class StatusMaker
         EnemyClass sFight = JsonConvert.DeserializeObject<EnemyClass>(jsonString);
         return sFight;
     }
-    
+
     //This Method checks if files exists, and if they do not, it creates them with 0 hp
     public void InitFight()
     {
@@ -64,7 +66,7 @@ class StatusMaker
             path1 = Application.persistentDataPath + "/" + item;
             if (!System.IO.File.Exists(path1))
             {
-                jsonString = JsonConvert.SerializeObject(new EnemyClass(0));
+                jsonString = JsonConvert.SerializeObject(new EnemyClass(0), Formatting.Indented);
                 Debug.Log(path1);
                 System.IO.File.WriteAllText(path1, jsonString);
             }
@@ -72,11 +74,11 @@ class StatusMaker
     }
 
     //Method for initializing a monster for a fight
-    public EnemyClass InitMonster(int numberPlayer,int monsterNo)
+    public EnemyClass InitMonster(int numberPlayer, int monsterNo)
     {
         filenamec = getMonsterFile(numberPlayer);
         path1 = Application.persistentDataPath + "/" + filenamec;
-        jsonString = JsonConvert.SerializeObject(new EnemyClass(monsterNo));
+        jsonString = JsonConvert.SerializeObject(new EnemyClass(monsterNo), Formatting.Indented);
         Debug.Log(path1);
         System.IO.File.WriteAllText(path1, jsonString);
         EnemyClass sFight = JsonConvert.DeserializeObject<EnemyClass>(jsonString);
@@ -90,7 +92,7 @@ class StatusMaker
         switch (eNum)
         {
             case 1:
-                return monsterFiles[eNum-1];
+                return monsterFiles[eNum - 1];
             case 2:
                 return monsterFiles[eNum - 1];
             case 3:
@@ -151,7 +153,80 @@ class StatusMaker
         return sFight;
     }
 
+    //1:Witch, 2:Samurai,3:Undead,4: RiceMonk
+    public void SetPlayer(int charM8, PlayerUber player)
+    {
+        switch (charM8)
+        {
+            case 1:
+                filenamec = "magician.json";
+                break;
+            case 2:
+                filenamec = "samurai.json";
+                break;
+            case 3:
+                filenamec = "undead.json";
+                break;
+            case 4:
+                filenamec = "rice.json";
+                break;
+            default:
+                break;
+        }
+        path1 = Application.persistentDataPath + "/" + filenamec;
+        //jsonString = System.IO.File.ReadAllText(path1);
+        //PlayerUber sFight = JsonConvert.DeserializeObject<PlayerUber>(jsonString);
+        jsonString = JsonConvert.SerializeObject(player, Formatting.Indented);
+        Debug.Log(path1);
+        System.IO.File.WriteAllText(path1, jsonString);
+    }
 
+
+    public static string GetPlayerFile(int eNum)
+    {
+        return playerMainFiles[eNum];
+    }
+
+    #region statusGlobalM8
+
+    public static void setInitialScreenjson(Vector3 position, Vector3 rotation, int idPlayer){
+        PlayerStatusGlobal playerStatusGlobal =
+            //position, rotation, int one, bool true, int overworlded, bool truemen, string magic
+            new PlayerStatusGlobal(position, rotation, 1, true, 0, false, "Basic Magic")
+        ;
+        string path1 = Application.persistentDataPath + "/" + GetPlayerFile(idPlayer - 1);
+        string jsonString = JsonConvert.SerializeObject(playerStatusGlobal, Formatting.Indented);
+        Debug.Log(path1);
+        System.IO.File.WriteAllText(path1, jsonString);
+            
+    }
+
+    public void setUltrajson(List<PlayerStatusGlobal> p11)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            path1 = Application.persistentDataPath + "/" + GetPlayerFile(i);
+            jsonString = JsonConvert.SerializeObject(p11[i], Formatting.Indented);
+            Debug.Log(path1);
+            System.IO.File.WriteAllText(path1, jsonString);
+        }
+    }
+
+    public List<PlayerStatusGlobal> GetUltrajson()
+    {
+        List<PlayerStatusGlobal> statsM8 = new List<PlayerStatusGlobal>();
+        for (int i = 0; i < 4; i++)
+        {
+            path1 = Application.persistentDataPath + "/" + GetPlayerFile(i);
+            jsonString = System.IO.File.ReadAllText(path1);
+            PlayerStatusGlobal sFight = JsonConvert.DeserializeObject<PlayerStatusGlobal>(jsonString);
+            Debug.Log(path1);
+            statsM8.Add(sFight);
+        }
+        return statsM8;
+    }
+
+#endregion
 }
 
 class StatusForFight
@@ -168,3 +243,32 @@ class StatusForFight
         this.typeOfFight   = tOF;
     }
 }
+
+public class PlayerStatusGlobal
+{
+    //Contains overworld character rotation and position
+    public Vector3 pos;
+    // Rotation is meant to be a Quaternion.Euler(f, f, f)
+    public Vector3 rot;
+    // 1: first One,2: ComeBack from Fight,3:Comebackfrom item, 4: Come
+    public int statusScene;
+    //To know whether or not to show the intro to fight
+    public bool firstFight = true;
+    //To know if current character is dead, and how much turns dead left
+    public int dead = 0;
+    public bool win = false;
+
+    public string magic = "";
+
+    public PlayerStatusGlobal(Vector3 posy, Vector3 roty, int one, bool truer, int overworldded, bool truemen, string magic)
+    {
+        this.pos = posy;
+        this.rot = roty;
+        statusScene = one;
+        firstFight = truer;
+        dead = overworldded;
+        win = truemen;
+        this.magic = magic;
+    }
+}
+

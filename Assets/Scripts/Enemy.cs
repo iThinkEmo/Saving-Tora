@@ -19,32 +19,61 @@ public class EnemyClass
     //MonsterNumber
     public int moNo;
 
+
+    //(Attack Power, Type)
+    // So return types will be: (1: defend,2:nothing,3:normal attack,4:critical attack,5: attack missed)
+    public int[] Attack(int power)
+    {
+        switch (power)
+        {
+            case 1:
+                return new int[] {dp, power };
+            case 2:
+                return new int[] {0, power };
+            case 3:
+                return new int[] {ap, power };
+            case 4:
+                return new int[] { (int)(ap * 1.8), power };
+            case 5:
+                return new int[] {0, power };
+            default:
+                break;
+        }
+        return new int[] {0,5};
+    }
+
     //Method to get the monster to Attack
     // Condition 1= attack, 1: defend, 2: nothing
     // Condition 1.1= 3: normal,  4: critical, 5: miss
     // So return types will be: (1: defend,2:nothing,3:normal attack,4:critical attack,5: attack missed)
-    public int Attack()
+    public int AttackPower()
     {
         System.Random randomizerMax = new System.Random();
+
         int rr = randomizerMax.Next(0, 100);
+        Debug.Log("MEEEEEEEEEEEEEEEEEEEEEEEEEE:"+ rr);
         if (rr < 80)
         {
             rr = randomizerMax.Next(0, 100);
-            if (rr < 20 + (sp / 2))
+            if (rr > 79)
             {
                 return 4;
             }
-            if (sp * 3 < rr)
+            if(rr<10)
             {
                 return 5;
             }
             return 3;
         }
-        else if (rr >= 80 && rr < 90)
+        else 
         {
-            return 1;
+            rr = randomizerMax.Next(0, 100);
+            if ( rr < 50)
+            {
+                return 1;
+            }
+            return 2;
         }
-        return 2;
     }
 
     //moreLess; 0 less, an attack. 1 more, an Item or heal
@@ -58,6 +87,13 @@ public class EnemyClass
         {
             this.hp += hpChange;
         }
+    }
+
+    public float HPPercentage()
+    {
+        float lol = (float)this.hp / this.maxHp;
+        //Debug.Log(lol);
+        return lol;
     }
 
     //Tony
@@ -91,8 +127,8 @@ public class EnemyClass
 
     public void Tony()
     {
-        maxHp = 30;
-        hp = 30;
+        maxHp = 40;
+        hp = 40;
         mp = 0;
         ap = 10;
         dp = 10;
@@ -102,8 +138,8 @@ public class EnemyClass
 
     public void TheEye()
     {
-        maxHp = 20;
-        hp = 20;
+        maxHp = 30;
+        hp = 30;
         mp = 20;
         ap = 5;
         dp = 5;

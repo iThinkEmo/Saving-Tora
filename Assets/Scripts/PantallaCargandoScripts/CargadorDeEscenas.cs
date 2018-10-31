@@ -11,26 +11,26 @@ public class CargadorDeEscenas : MonoBehaviour {
     //Variables que se asignan en el inspector
     public RawImage ImagenCargando;
 
+    private GameManager gameManagerDelJuego;
 
     private AsyncOperation operadorAsincrono; //sera de utilidad para la cargfa de la escena
     private Vector3 rotationEulerParaImagen;
     private int rotacionGrados = 90;
 
     private string[] nombreEscenasQueSeVanCargarMultiple = new string[] {
-        "Main Scene",
-        //"Dice",
+        "Main Scene 1",
         "Level 1",
         "Level 2",
         "Level 3",
         "Level 4",
         "Continent",
-        "Main Characters 1",
+        "Main characters pro",
         "Navigation Mesh"
     };
 
     public void Start() {
         Application.backgroundLoadingPriority = ThreadPriority.BelowNormal;
-        GameManager gameManagerDelJuego = GameManager.Instance;
+        gameManagerDelJuego = GameManager.Instance;
         StartCoroutine(AsynchronousLoad(gameManagerDelJuego.NombreNivelQueSeVaCargar));   
     }
 
@@ -39,6 +39,16 @@ public class CargadorDeEscenas : MonoBehaviour {
                      rotationEulerParaImagen += Vector3.forward * rotacionGrados * Time.deltaTime;
                 rotacionGrados += 30;
                 ImagenCargando.transform.rotation = Quaternion.Euler(rotationEulerParaImagen);//aplicando el giro  a la imagen
+    }
+
+    public void BackToMainGame(){
+        Debug.Log("Terminó de cargar main chars pro");
+        GameObject timeline = GameObject.FindGameObjectWithTag("timelineIntro");
+        if (timeline){
+            timeline.SetActive(false);
+        }
+        StartCoroutine(SelectNode.LoadNextPlayer());
+        Debug.Log("mirando");
     }
 
 
@@ -72,6 +82,11 @@ public class CargadorDeEscenas : MonoBehaviour {
                     rotacionGrados += 30;
                     ImagenCargando.transform.rotation = Quaternion.Euler(rotationEulerParaImagen);//aplicando el giro  a la imagen
                     yield return null; }
+
+                // Main Characters Pro has done loading and is active
+                if (i==6 && sceneLoads[i].isDone && !gameManagerDelJuego.firstLoadMainScene) {
+                    BackToMainGame();
+                }
             }
 
             AsyncOperation sceneUnloading = SceneManager.UnloadSceneAsync(originalScene);

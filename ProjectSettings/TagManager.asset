@@ -18,6 +18,28 @@ TagManager:
   - Witch
   - Samurai
   - Undead
+  - spacesLeft
+  - witchArm
+  - confirmSpace
+  - moveBack
+  - stayHere
+  - ricemanArm
+  - samuraiArm
+  - undeadArm
+  - hpMeFight
+  - hpEnemyFight
+  - hpMeDark
+  - hpEnemyDark
+  - timelineIntro
+  - factory
+  - rules
+  - Shopkeeper
+  - Dice
+  - Box
+  - nodesType
+  - playerFights
+  - Coin
+  - foundGold
   layers:
   - Default
   - TransparentFX

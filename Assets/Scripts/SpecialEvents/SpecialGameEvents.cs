@@ -13,12 +13,12 @@ class SpecialGameEvents
     string[] InnDialogue;
     string[] ChestDialogue;
 
-    public SpecialGameEvents()
-    {
+
+    public SpecialGameEvents(){
         hospitalRescuedDialogue = new string[] {"You were saved and treated in the Hospital. Your HP is restored.","Some of your money fell from your pocket.","Some fans stopped following you."};
         hospitalDialogue = new string[] {"Do you want to be healed in the hospital ", "Your HP is restored.", "OK, nevermind then."};
         InnDialogue      = new string[] {"Do you want to spend the night ","Great, your room is ready.","There was no vacancy anyway..."};
-        ChestDialogue    = new string[] {"You Found "," on the Floor.", " on a chest."};
+        ChestDialogue    = new string[] {"You found $"," on the floor."};
     }
 
     //Method for returning the whole of an interaction with the hospital
@@ -47,34 +47,34 @@ class SpecialGameEvents
         return myList.ToArray();
     }
 
-    public string[] ChestInteraction(int area)
-    {
+    public string[] ChestInteraction(int area, PlayerUber playerUber, Saviour saviour){
         List<string> myList = new List<string>();
         myList.Add(ChestDialogue[0]);
-        myList.Add(LootCalculator(area));
+        int moneyVal = LootCalculator(area);
+        playerUber.money += moneyVal;
+        saviour.money += moneyVal;
+        myList.Add(moneyVal.ToString());
         myList.Add(ChestDialogue[1]);
-        myList.Add(ChestDialogue[2]);
         return myList.ToArray();
     }
 
-    public string LootCalculator(int area)
-    {
+    public int LootCalculator(int area){
         System.Random randomizerMax = new System.Random();
         int moneyVal = randomizerMax.Next(0, 100);
         switch (area)
         {
             case 1:
-                return " $" + moneyVal;
+                return moneyVal;
             case 2:
-                return " $" + moneyVal * 4;
+                return moneyVal * 4;
             case 3:
-                return " $" + moneyVal * 8;
+                return moneyVal * 8;
             case 4:
-                return " $" + moneyVal * 15;
+                return moneyVal * 15;
             default:
-                break;
+                // $0, Cheater.
+                return 0;
         }
-        return "$0, Cheater.";
     }
 
 

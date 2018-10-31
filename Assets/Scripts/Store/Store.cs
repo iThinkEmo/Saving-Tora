@@ -2,25 +2,26 @@
 using System.Text;
 using System.IO;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class Store
 {
-    public string[] magicNames;
-    public string[] magicDescr;
-    public int[] magicPower;
-    public int[] magicCosts;
+    public  string[] magicNames;
+    public  string[] magicDescr;
+    public  int[] magicPower;
+    public  int[] magicCosts;
 
-    public string[] itemNames;
-    public string[] itemDescription;
-    public int[] itemNumbers;
-    public int[][] itemPower;
-    public int[] itemCosts;
+    public  string[] itemNames;
+    public  string[] itemDescription;
+    public  int[] itemNumbers;
+    public  int[][] itemPower;
+    public  int[] itemCosts;
 
-    public string[] equipmentNames;
-    public int[] equipmentArea;
-    public int[] equipmentLV;
-    public int[][] equipmentPower;
-    public int[] equipmentCosts;
+    public  string[] equipmentNames;
+    public  int[] equipmentArea;
+    public  int[] equipmentLV;
+    public  int[][] equipmentPower;
+    public  int[] equipmentCosts;
 
     public Store(int area)
     {
@@ -49,7 +50,7 @@ public class Store
         string[] thisPerks;
         List<int> littleInt = new List<int>();
         System.IO.StreamReader file =
-            new System.IO.StreamReader(@"c:\itemo.csv");
+            new System.IO.StreamReader("Assets/Scripts/Store/itemo"+area+".csv");
         while ((line = file.ReadLine()) != null)
         {
             thisElements = line.Split(',');
@@ -68,21 +69,21 @@ public class Store
         file.Close();
 
         //Final Assignmentm8
-        itemNames = GetSubArray(tempNames, area, 5, 1);
-        itemDescription = GetSubArray(tempDescription, area, 5, 1);
-        itemNumbers = GetSubArray(tempNumbers, area, 5, 1);
-        List<int> miniInt = new List<int>();
-        for (int i = 0; i < tempPower.Count; i++)
-        {
-            miniInt.Clear();
-            for (int j = 0; j < 6; j++)
-            {
-                miniInt.Add(tempPower[i][j]);
-            }
-            tempPower.Add(miniInt.ToArray());
-        }
-        itemPower = GetSubArray(tempPower, area, 5, 1);
-        itemCosts = GetSubArray(tempCosts, area, 5, 1);
+        itemNames = tempNames.ToArray();//GetSubArray(tempNames, area, 5, 1);
+        itemDescription = tempDescription.ToArray();//GetSubArray(tempDescription, area, 5, 1);
+        itemNumbers = tempNumbers.ToArray();//GetSubArray(tempNumbers, area, 5, 1);
+        // List<int> miniInt = new List<int>();
+        // for (int i = 0; i < tempPower.Count; i++)
+        // {
+        //     miniInt.Clear();
+        //     for (int j = 0; j < 6; j++)
+        //     {
+        //         miniInt.Add(tempPower[i][j]);
+        //     }
+        //     tempPower.Add(miniInt.ToArray());
+        // }
+        itemPower = tempPower.ToArray();//GetSubArray(tempPower, area, 5, 1);
+        itemCosts = tempCosts.ToArray();//GetSubArray(tempCosts, area, 5, 1);
     }
 
     public void FillEquipment(int area)
@@ -101,7 +102,7 @@ public class Store
         string[] thisPerks;
         List<int> littleInt = new List<int>();
         System.IO.StreamReader file =
-            new System.IO.StreamReader(@"c:\itemo.csv");
+            new System.IO.StreamReader("Assets/Scripts/Store/equipo" + area + ".csv");
         while ((line = file.ReadLine()) != null)
         {
             thisElements = line.Split(',');
@@ -120,21 +121,22 @@ public class Store
         file.Close();
 
         //Final Assignmentm8
-        equipmentNames = GetSubArray(tempNames, area, 11, 2);
-        equipmentArea = GetSubArray(tempArea, area, 11, 2);
-        equipmentLV = GetSubArray(tempNumbers, area, 11, 2);
+        equipmentNames = tempNames.ToArray();//GetSubArray(tempNames, area, 11, 2);
+        equipmentArea = tempArea.ToArray();//GetSubArray(tempArea, area, 11, 2);
+        equipmentLV = tempNumbers.ToArray();//GetSubArray(tempNumbers, area, 11, 2);
         List<int> miniInt = new List<int>();
-        for (int i = 0; i < tempPower.Count; i++)
-        {
-            miniInt.Clear();
-            for (int j = 0; j < 6; j++)
-            {
-                miniInt.Add(tempPower[i][j]);
-            }
-            tempPower.Add(miniInt.ToArray());
-        }
-        equipmentPower = GetSubArray(tempPower, area, 11, 2);
-        equipmentCosts = GetSubArray(tempCosts, area, 11, 2);
+
+        // for (int i = 0; i < tempPower.Count; i++)
+        // {
+        //     miniInt.Clear();
+        //     for (int j = 0; j < 6; j++)
+        //     {
+        //         miniInt.Add(tempPower[i][j]);
+        //     }
+        //     tempPower.Add(miniInt.ToArray());
+        // }
+        equipmentPower = tempPower.ToArray();//GetSubArray(tempPower, area, 11, 2);
+        equipmentCosts = tempCosts.ToArray();//GetSubArray(tempCosts, area, 11, 2);
     }
 
     public void FillMagica(int area)
@@ -150,22 +152,22 @@ public class Store
         string[] thisElements;
         List<int> littleInt = new List<int>();
         System.IO.StreamReader file =
-            new System.IO.StreamReader(@"c:\itemo.csv");
+            new System.IO.StreamReader("Assets/Scripts/Store/magia" + area + ".csv");
         while ((line = file.ReadLine()) != null)
         {
             thisElements = line.Split(',');
             tempNames.Add(thisElements[0]);
             tempDescription.Add(thisElements[1]);
             tempPower.Add(Int32.Parse(thisElements[2]));
-            tempCosts.Add(Int32.Parse(thisElements[4]));
+            tempCosts.Add(Int32.Parse(thisElements[3]));
         }
         file.Close();
 
         //Final Assignmentm8
-        magicNames = GetSubArray(tempNames, area - 1, 4, 3);
-        magicDescr = GetSubArray(tempDescription, area - 1, 4, 3);
-        magicPower = GetSubArray(tempPower, area - 1, 4, 3);
-        magicCosts = GetSubArray(tempCosts, area - 1, 4, 3);
+        magicNames = tempNames.ToArray();//GetSubArray(tempNames, area - 1, 4, 3);
+        magicDescr = tempDescription.ToArray();//GetSubArray(tempDescription, area - 1, 4, 3);
+        magicPower = tempPower.ToArray();//GetSubArray(tempPower, area - 1, 4, 3);
+        magicCosts = tempCosts.ToArray();//GetSubArray(tempCosts, area - 1, 4, 3);
     }
 
 
@@ -353,19 +355,29 @@ public class Store
         return thisList;
     }
 
-    //Return needed dat for buying an object:
-    //(status, newWealth, magiaName,  textOfStatus)
+    /// <summary>
+    /// Returns a string array of: [status, newWealth, magiaName,  textOfStatus]
+    /// </summary>
     public string[] BuyMagia(int currentWealth, string magiaName)
     {
-        int tempCost = GetMagiaCost(magiaName);
-        int status = NotEnoughWealth(currentWealth, tempCost);
-        string textStor = BuyStatus(status);
-        int newW = currentWealth;
-        if (status > 0)
-        {
-            newW = NewWealth(currentWealth, tempCost);
-        }
-        string[] thisList = new string[] { status.ToString(), newW.ToString(), magiaName, textStor };
+        int tempCost = 0;
+		string[] thisList=new string[4];
+		if (GetMagiaCost(magiaName) != -1) {
+			tempCost = GetMagiaCost(magiaName);
+			int status = NotEnoughWealth(currentWealth, tempCost);
+			string textStor = BuyStatus(status);
+			int newW = currentWealth;
+			if (status > 0) {
+				newW = NewWealth(currentWealth, tempCost);
+			}
+			thisList[0] = status.ToString();
+			thisList[1] = newW.ToString();
+			thisList[2] = magiaName;
+			thisList[3] = textStor;
+		} else {
+			Debug.Log("Article not found");
+		}
+        
         return thisList;
     }
 
@@ -380,7 +392,7 @@ public class Store
     public int[] GetEquipCost(string nameMen)
     {
         int indexe = GetEquipIndex(nameMen);
-        return new int[] { indexe,equipmentCosts[indexe] };
+        return new int[] { indexe, equipmentCosts[indexe] };
     }
 
     //To get the index for the equipment cost
@@ -388,38 +400,60 @@ public class Store
     {
         for (int i = 0; i < equipmentNames.Length; i++)
         {
-            if (equipmentNames[i].Equals(magiN))
+            if (equipmentNames[i].ToLower().Equals(magiN.ToLower()))
             {
                 return i;
             }
         }
-        return 0;
+        return -1;
     }
 
-    //For getting the cost of the magic
+    /// <summary>
+    /// Retrieves the cost of the magic or returns -1 if article not found
+    /// </summary>
     public int GetMagiaCost(string magiN)
     {
-        int indexM = GetMagiaIndex(magiN); 
-        return magicCosts[indexM];
+		if (GetMagiaIndex(magiN) != -1) {
+			int indexM = GetMagiaIndex(magiN);
+			return magicCosts[indexM];
+		}
+        
+        return -1;
     }
 
-    //To get the index for the magic cost
+    /// <summary>
+    /// Gets the index for the magic cost or returns -1 if article not found
+    /// </summary>
     public int GetMagiaIndex(string magiN)
     {
         for (int i = 0; i < magicNames.Length; i++)
         {
-            if (magicNames[i].Equals(magiN))
+            if (magicNames[i].ToLower().Equals(magiN.ToLower()))
             {
                 return i;
             }
         }
-        return 0;
+        return -1;
     }
 
-    //Method for returning 1 if users wealth is enough for article selected, 0 if not.
-    public int NotEnoughWealth(int wealth, int cost)
+	public int GetItemIndex(string itemN) {
+		for (int i = 0; i < itemNames.Length; i++) {
+			if (itemNames[i].ToLower().Equals(itemN.ToLower())) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+
+
+
+    /// <summary>
+    /// Returns 1 if user's wealth is enough for article selected, 0 if not.
+    /// </summary>
+	public int NotEnoughWealth(int wealth, int cost)
     {
-        if (cost>wealth)
+        if (cost > wealth)
         {
             return 0;
         }
@@ -430,16 +464,54 @@ public class Store
     //1 YES, 0 NOT
     public string BuyStatus(int wealth)
     {
-        if (wealth==1)
+        if (wealth == 1)
         {
             return "Thank you!";
         }
         return "You don't have enough money!";
     }
 
-    //Method for returning users new wealth.
+    /// <summary>
+    /// Returns user's new wealth (wealth - cost).
+    /// </summary>
     public int NewWealth(int wealth, int cost)
     {
-        return wealth-cost;
+        return wealth - cost;
     }
+
+    //public static void Main()
+    //{
+    //    Store myS = new Store(1);
+
+    //    for (int i = 0; i < magicNames.Length; i++)
+    //    {
+    //        Console.WriteLine(magicNames[i] + "," + magicDescr[i] + "," + magicPower[i] + "," + magicCosts[i]);
+    //        for (int j = 0; j < magicPower.Length; j++)
+    //        {
+    //            Console.Write(magicPower[j] + ",");
+    //        }
+    //        Console.Write("\n");
+    //    }
+    //    for (int i = 0; i < itemNames.Length; i++)
+    //    {
+    //        Console.WriteLine(itemNames[i] + "," + itemDescription[i] + "," + itemNumbers[i] + "," + itemPower[i] + "," + itemCosts[i]);
+    //        for (int j = 0; j < itemPower[i].Length; j++)
+    //        {
+    //            Console.Write(itemPower[i][j] + ",");
+    //        }
+    //        Console.Write("\n");
+    //    }
+    //    for (int i = 0; i < equipmentNames.Length; i++)
+    //    {
+    //        Console.WriteLine(equipmentNames[i] + "," + equipmentArea[i] + "," + equipmentLV[i] + "," + equipmentPower[i] + "," + equipmentCosts[i]);
+    //        for (int j = 0; j < equipmentPower[i].Length; j++)
+    //        {
+    //            Console.Write(equipmentPower[i][j] + ",");
+    //        }
+    //        Console.Write("\n");
+    //    }
+    //}
 }
+
+
+

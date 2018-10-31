@@ -387,6 +387,35 @@ Prefab:
       propertyPath: m_Color.b
       value: 0.9481132
       objectReference: {fileID: 0}
+    - target: {fileID: 1752799098464720, guid: b7c1cecd8f978234d89e21b2bd762fce, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1230438416154774, guid: b7c1cecd8f978234d89e21b2bd762fce, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1164934269130484, guid: b7c1cecd8f978234d89e21b2bd762fce, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1989170572986370, guid: b7c1cecd8f978234d89e21b2bd762fce, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1180527210703456, guid: b7c1cecd8f978234d89e21b2bd762fce, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1259318034121326, guid: b7c1cecd8f978234d89e21b2bd762fce, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114097497704767930, guid: b7c1cecd8f978234d89e21b2bd762fce,
+        type: 2}
+      propertyPath: m_UiScaleMode
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b7c1cecd8f978234d89e21b2bd762fce, type: 2}
   m_IsPrefabAsset: 0

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using UnityEngine;
 using System.Collections.Generic;
 
 public class PlayerUber {
@@ -80,12 +81,20 @@ public class PlayerUber {
 
     }
 
+    public float HPPercentage()
+    {
+        float lol = (float)this.hp / this.maxhp;
+        //Debug.Log(lol);
+        return lol;
+    }
+
     #endregion
 
     #region Magic
     //To change magic
     //0:"Basic Magic",1:"Fire",2:"Blizzard",3:"Shock",4:"Natura"
     //0:"",1:"",2:"Big ",3:"Death ",4:"God "
+	//new magic
     public void ChangeMagic(String magic)
     {
         int mlevel, mtype;
@@ -144,18 +153,18 @@ public class PlayerUber {
     }
 
     //To list my Items on the Inventory
-    public ItemRPG[] GetItems()
-    {
+    public ItemRPG[] GetItems() {
         return items.GetMyItems();
     }
 
-    #endregion
+	#endregion
 
-    #region Equipment
+	#region Equipment
 
-    //Method to equip equipment 
-    //area: (1-Head | 2-Hands | 3-Torso | 4-Feet);
-    public void Equip(int part, int equip)
+	//Method to equip equipment 
+	//part: (1-Head | 2-Hands | 3-Torso | 4-Feet);
+	///new equ
+	public void Equip(int part, int equip)
     {
         playerEquipment.EquipEquipment(part, equip);
         ApplyEquipment(part, equip, 0);
@@ -260,6 +269,83 @@ public class PlayerUber {
 
     #endregion
 
+    #region Fight
+
+    public int Defend()
+    {
+        return this.dp;
+    }
+
+    //Method to Attack physicially
+    //(Attack Power, Type)
+    //0 attack means missed, 1 normal, 2 critical
+    public int[] Attack()
+    {
+        int[] mu = {0,0};
+        if (!AttackMissed())
+        {
+            if (AttackCritical())
+            {
+                return new int[] { (int)(ap * 1.8), 2 };
+            }
+            else
+            {
+                return new int[] { ap, 1};
+            }
+        }
+        return mu;
+    }
+
+
+    //Method to Attack with magica
+    //(Attack Power, Type)
+    //0 attack means missed, 1 normal, 2 critical
+    public int[] AttackMagi()
+    {
+        int[] mu = { 0, 0 };
+        if (!AttackMissed())
+        {
+            if (AttackCritical())
+            {
+                return new int[] { (int)(mp * 1.8), 2 };
+            }
+            else
+            {
+                return new int[] { mp, 1 };
+            }
+        }
+        return mu;
+    }
+
+    //Method to get powerfullness of an attack
+    // So return types will be: (0: normalAttack,1:critical attack)
+    public bool AttackCritical()
+    {
+        System.Random randomizerMax = new System.Random();
+        int rr = randomizerMax.Next(0, 100);
+        rr += this.sp/2;
+        if (rr < 80)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    //Method to get missness of an attack
+    // So return types will be: (0: done,1:missed)
+    public bool AttackMissed()
+    {
+        System.Random randomizerMax = new System.Random();
+        int rr = randomizerMax.Next(0, 100);
+        rr -= this.sp;
+        if (rr < 90)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    #endregion
 
     public PlayerUber(int quejugadoresm8)
     {
@@ -293,7 +379,7 @@ public class PlayerUber {
         sp = 6;
         lv = 1;
         gender = gen;
-        money = 0;
+        money = 200;
         fans = 50;
         exp = 0;
         maxExp = 5;
@@ -312,7 +398,7 @@ public class PlayerUber {
         sp = 10;
         lv = 1;
         gender = gen;
-        money = 0;
+        money = 200;
         fans = 50;
         exp = 0;
         maxExp = 5;
@@ -331,7 +417,7 @@ public class PlayerUber {
         sp = 16;
         lv = 1;
         gender = gen;
-        money = 0;
+        money = 200;
         fans = 50;
         exp = 0;
         maxExp = 5;
@@ -339,7 +425,6 @@ public class PlayerUber {
         level = new LV(2);
         magica = new Magica(0, 0);
     }
-
 
     public void Magician(int gen)
     {
@@ -351,12 +436,33 @@ public class PlayerUber {
         sp = 8;
         lv = 1;
         gender = gen;
-        money = 0;
+        money = 200;
         fans = 50;
         exp = 0;
         maxExp = 5;
         items = new PlayerItems();
         level = new LV(1);
         magica = new Magica(0, 0);
+    }
+
+    public static int normalizeCurrentPlayer(int currentPlayer){
+        switch (currentPlayer){
+			case 1:
+				currentPlayer = 1;
+				break;
+			case 2:
+				currentPlayer = 4;
+				break;
+			case 3:
+				currentPlayer = 2;
+				break;
+			case 4:
+				currentPlayer = 3;
+				break;
+			default:
+				currentPlayer = 1;
+				break;
+		}
+        return currentPlayer;   
     }
 }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class Saviour : MonoBehaviour {
 
@@ -282,7 +283,7 @@ public class Saviour : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-		//animator.SetFloat("Speed", agent.velocity.magnitude);
+		animator.SetFloat("Speed", agent.velocity.magnitude);
     }
 
     public void Walk(int node, int direction) {
@@ -310,15 +311,18 @@ public class Saviour : MonoBehaviour {
     public void Move(){
         switch(selectedNode){
             case 1: case 2: case 3: case 4: {
+                //agent.speed = 10;
                 agent.speed = 10;
                 break;
             }
             default: {
-                agent.speed = 80;
+                //agent.speed = 80;
+                agent.speed = 10;
                 break;
             }
         }
         agent.SetDestination(NodesMap.nodesPosition[selectedNode]);
+        SelectNode.UpdateSpacesLeft();
     }
 
     public void MoveBack(){
@@ -329,5 +333,7 @@ public class Saviour : MonoBehaviour {
 		SelectNode.spacesLeft++;
         Move();
     }
+
+    
 }
 

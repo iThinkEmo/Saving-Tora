@@ -421,6 +421,12 @@ Prefab:
       propertyPath: m_TargetAudioSources.Array.data[0]
       value: 
       objectReference: {fileID: 612535328}
+    - target: {fileID: 328322631397546090, guid: 797e1c96d7804324cad32d9c6d5d5900,
+        type: 2}
+      propertyPath: m_VideoClip
+      value: 
+      objectReference: {fileID: 32900000, guid: c0b8becbb8f7d6e4581d5245d716d4d6,
+        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 797e1c96d7804324cad32d9c6d5d5900, type: 2}
   m_IsPrefabAsset: 0

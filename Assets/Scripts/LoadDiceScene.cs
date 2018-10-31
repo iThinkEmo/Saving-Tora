@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class LoadDiceScene : MonoBehaviour {
 
@@ -10,60 +9,30 @@ public class LoadDiceScene : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		gameManagerDelJuego = GameManager.Instance;
-
-		GameObject characters = GameObject.FindGameObjectWithTag("Characters");
-		if (characters){
-			for (int i = 0; i < characters.transform.childCount; i++){
-
-				if(gameManagerDelJuego.userNameCharacter.ContainsValue(i+1)){
-					characters.transform.GetChild(i).gameObject.SetActive(true);
-
-					string name = characters.transform.GetChild(i).gameObject.name;
-					PlayerUber player;
-
-					switch (name){
-						case "Witch":
-							player = gameManagerDelJuego.witch;
-							break;
-						case "Riceman":
-							player = gameManagerDelJuego.ricemonk;
-							break;
-						case "Samurai":
-							player = gameManagerDelJuego.samurai;
-							break;
-						case "Undead":
-							player = gameManagerDelJuego.undead;
-							break;
-						default:
-							player = gameManagerDelJuego.witch;
-							break;
-					}
-
-					Saviour script = characters.transform.GetChild(i).GetComponent<Saviour>();
-					script.maxhp = player.maxhp;
-					script.hp = player.hp;
-					script.mp = player.mp;
-					script.ap = player.ap;
-					script.dp = player.dp;
-					script.sp = player.sp;
-					script.lv = player.lv;
-					script.exp = player.exp;
-					script.maxExp = player.maxExp;
-					script.money = player.money;
-					script.fans = player.fans;
-					script.gender = player.gender;
-					script.items = player.items;
-					script.playerEquipment = player.playerEquipment;
-					script.magica = player.magica;
-					script.perkArray = player.perkArray;
-					script.level = player.level;
-				}
-				
-				
-			}
+		GameObject rules = GameObject.FindGameObjectWithTag("rules");
+		if (rules){
+			// Prende el timeline de las instrucciones
+			rules.transform.GetChild(22).gameObject.SetActive(true);
+			//rules.transform.GetChild(23).gameObject.SetActive(true);
+		}
+		GameObject shopkeeper = GameObject.FindGameObjectWithTag("Shopkeeper");
+		if (shopkeeper){
+			shopkeeper.transform.GetChild(0).gameObject.SetActive(true);
 		}
 
-		SceneManager.LoadScene ( "Dice", LoadSceneMode.Additive);
+		gameManagerDelJuego.AddSelectUserCharacter("Ald", 1);
+		// gameManagerDelJuego.AddSelectUserCharacter("Mar", 2);
+		gameManagerDelJuego.AddSelectUserCharacter("Kar", 3);
+		gameManagerDelJuego.AddSelectUserCharacter("Irv", 4);
+		gameManagerDelJuego.numberOfPlayers = 3;
+		gameManagerDelJuego.WhoStarts();
+		Debug.Log(gameManagerDelJuego.numberOfPlayers);
+		Debug.Log(gameManagerDelJuego.orderedPlayers[0]);
+		Debug.Log(gameManagerDelJuego.orderedPlayers[1]);
+		Debug.Log(gameManagerDelJuego.orderedPlayers[2]);
+		// Debug.Log(gameManagerDelJuego.orderedPlayers[3]);
+
+		gameManagerDelJuego.instanciarPersonajes();
 	}
 	
 	// Update is called once per frame

@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Cinemachine;
+using UnityEngine.SceneManagement;
 
 public class Dice : MonoBehaviour{
 
@@ -11,18 +13,16 @@ public class Dice : MonoBehaviour{
 
 	public static bool finishedBouncing;
 
-	private PosCamera posCamera;
-
 	public GameObject starSparks, dice;
-	
-	void Update() {
 
+	private GameManager gameManagerDelJuego;
+	
+	void Start(){
+		finishedBouncing = false;
+	}
+	void Update() {
 		if(finishedBouncing) {
-			//GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
-			Debug.Log(anim.GetInteger("side"));
 			side = anim.GetInteger("side");
-			posCamera = GameObject.Find("Main Camera").GetComponent<PosCamera>();
-			posCamera.enabled = true;
 			starSparks.SetActive(true);
 			dice.SetActive(false);
 			TurnOff();
@@ -35,15 +35,23 @@ public class Dice : MonoBehaviour{
 	}
 
 	void TossDice() {
+		gameManagerDelJuego = GameManager.Instance;
+		int currentPlayer = gameManagerDelJuego.GetCurrentPlayer();
+		string character = gameManagerDelJuego.idCharacter[currentPlayer];
+		string characterArm = character.ToLower()+"Arm";
+		Debug.Log(character);
+		Debug.Log(characterArm);
+		LookAt.LookAtNextCharacter(character, characterArm);
+
 		rolling = false;
 		finishedBouncing = false;
 		rb = GetComponent<Rigidbody>();
 		rb.useGravity = true;
-		int side = Random.Range(6, 7);
+		int side = Random.Range(1, 7);
 		anim.SetInteger("side", side);
 
-		//SelectNode.spacesLeft = side;
-		SelectNode.spacesLeft = 12;
+		// SelectNode.spacesLeft = side;
+		SelectNode.spacesLeft = 6;
 
 		Vector3 force = Vector3.up * Random.Range(360.0f, 380.0f);
 		rb.AddForce(force);
@@ -56,6 +64,7 @@ public class Dice : MonoBehaviour{
 
 	public void TurnOff(){
 		this.enabled = false;
+		SceneManager.UnloadSceneAsync("Dice");
 	}
 
 }
