@@ -18,7 +18,7 @@ class StatusMaker
     //cP = currentPlayer: To know which character to spawn
     //1:Witch, 2:Samurai,3:Undead,4: RiceMonk
     //a  = Area         : To know which monster to spawn based on the area
-    //tOF= Type of Fight: 0:Normal, 1:BOSS, 2:ULTRABOSS, 3 store
+    //tOF= Type of Fight: 0:Normal, 1:BOSS, 2:ULTRABOSS
     public StatusMaker(int cP, int a, int tOF)
     {
         fStat = new StatusForFight(cP, a, tOF);
@@ -176,7 +176,7 @@ class StatusMaker
         path1 = Application.persistentDataPath + "/" + filenamec;
         //jsonString = System.IO.File.ReadAllText(path1);
         //PlayerUber sFight = JsonConvert.DeserializeObject<PlayerUber>(jsonString);
-        jsonString = JsonConvert.SerializeObject(player, Formatting.Indented);
+        jsonString = JsonConvert.SerializeObject(player, Formatting.Indented);        
         Debug.Log(path1);
         System.IO.File.WriteAllText(path1, jsonString);
     }
@@ -194,7 +194,7 @@ class StatusMaker
             //position, rotation, int one, bool true, int overworlded, bool truemen, string magic
             new PlayerStatusGlobal(position, rotation, 1, true, 0, false, "Basic Magic")
         ;
-        string path1 = Application.persistentDataPath + "/" + GetPlayerFile(idPlayer - 1);
+        string path1 = Application.persistentDataPath + "/" + GetPlayerFile(idPlayer);
         string jsonString = JsonConvert.SerializeObject(playerStatusGlobal, Formatting.Indented);
         Debug.Log(path1);
         System.IO.File.WriteAllText(path1, jsonString);
@@ -226,7 +226,32 @@ class StatusMaker
         return statsM8;
     }
 
-#endregion
+    #endregion
+
+    #region fightend
+
+    public FightEnd GetEnd()
+    {
+        filenamec = "fightended.json";
+        path1 = Application.persistentDataPath + "/" + filenamec;
+        jsonString = System.IO.File.ReadAllText(path1);
+        FightEnd sFight = JsonConvert.DeserializeObject<FightEnd>(jsonString);
+        Debug.Log(path1);
+        return sFight;
+    }
+
+    //awarded exp -1 means that is an inmediate level up 
+    public void SetEnd(int playerNum, int awardedEXP, int awardedFans, int awardedMoney, int turnsLost, bool didWin)
+    {
+        FightEnd fend = new FightEnd(playerNum, awardedEXP, awardedFans, awardedMoney, turnsLost, didWin);
+        filenamec = "fightended.json";
+        path1 = Application.persistentDataPath + "/" + filenamec;
+        jsonString = JsonConvert.SerializeObject(fend, Formatting.Indented);
+        Debug.Log(path1);
+        System.IO.File.WriteAllText(path1, jsonString);
+    }
+
+    #endregion
 }
 
 class StatusForFight
@@ -269,6 +294,32 @@ public class PlayerStatusGlobal
         dead = overworldded;
         win = truemen;
         this.magic = magic;
+    }
+}
+
+public class FightEnd
+{
+    //EXP that will be alloted to the user
+    public int exp;
+    //numplayer
+    public int numplayer;
+    //fanses that were won or lost
+    public int fans;
+    //money that will be lost or won
+    public int money;
+    //winorlose
+    public bool win;
+    //turnslost
+    public int tLost;
+
+    public FightEnd(int playerNum, int awardedEXP, int awardedFans, int awardedMoney, int turnsLost, bool didWin)
+    {
+        this.exp = awardedEXP;
+        this.numplayer = playerNum;
+        this.fans = awardedFans;
+        this.money = awardedMoney;
+        this.win = didWin;
+        this.tLost = turnsLost;
     }
 }
 

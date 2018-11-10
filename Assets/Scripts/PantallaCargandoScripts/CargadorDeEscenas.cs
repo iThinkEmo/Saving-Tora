@@ -41,16 +41,17 @@ public class CargadorDeEscenas : MonoBehaviour {
                 ImagenCargando.transform.rotation = Quaternion.Euler(rotationEulerParaImagen);//aplicando el giro  a la imagen
     }
 
-    public void BackToMainGame(){
-        Debug.Log("Terminó de cargar main chars pro");
+    public IEnumerator BackToMainGame(){
         GameObject timeline = GameObject.FindGameObjectWithTag("timelineIntro");
         if (timeline){
             timeline.SetActive(false);
         }
-        StartCoroutine(SelectNode.LoadNextPlayer());
-        Debug.Log("mirando");
+        GameObject vcam1 = GameObject.FindGameObjectWithTag("Virtual Camera 1");
+        if (vcam1){
+            vcam1.SetActive(false);
+        }
+        yield return StartCoroutine(SelectNode.LoadNextPlayer());
     }
-
 
 
     IEnumerator AsynchronousLoad(string escena)
@@ -85,7 +86,7 @@ public class CargadorDeEscenas : MonoBehaviour {
 
                 // Main Characters Pro has done loading and is active
                 if (i==6 && sceneLoads[i].isDone && !gameManagerDelJuego.firstLoadMainScene) {
-                    BackToMainGame();
+                    yield return StartCoroutine(BackToMainGame());
                 }
             }
 
@@ -104,7 +105,7 @@ public class CargadorDeEscenas : MonoBehaviour {
             while (!operadorAsincrono.isDone)
             {
                 float progress = Mathf.Clamp01(operadorAsincrono.progress / 0.9f);
-                Debug.Log("Progreso de carga: " + (progress * 100) + "%");
+                // Debug.Log("Progreso de carga: " + (progress * 100) + "%");
                 rotationEulerParaImagen += Vector3.forward * rotacionGrados * Time.deltaTime;
                 rotacionGrados += 30;
                 ImagenCargando.transform.rotation = Quaternion.Euler(rotationEulerParaImagen);//aplicando el giro  a la imagen

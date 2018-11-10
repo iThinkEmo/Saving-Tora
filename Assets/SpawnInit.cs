@@ -17,33 +17,38 @@ public class SpawnInit : MonoBehaviour {
 
 		GameObject characters = GameObject.FindGameObjectWithTag("Characters");
 		if (characters){
-			for (int i = 0; i < characters.transform.childCount; i++){
+			// - 1 porque tenemos al ShopKeeper.
+			for (int i = 0; i < characters.transform.childCount - 1; i++){
+				GameObject spawnedCharacter = characters.transform.GetChild(i).gameObject;
+				Vector3 chPosition = spawnedCharacter.transform.position;
+				Vector3 chRotation = spawnedCharacter.transform.eulerAngles;
+				StatusMaker.setInitialScreenjson(chPosition, chRotation, i);
+				
 				if(gameManagerDelJuego.playerDictionary.ContainsValue(i+1)){
-					GameObject spawnedCharacter = characters.transform.GetChild(i).gameObject;
 					spawnedCharacter.SetActive(true);
-					Vector3 chPosition = spawnedCharacter.transform.position;
-					Vector3 chRotation = spawnedCharacter.transform.eulerAngles;
-					StatusMaker.setInitialScreenjson(chPosition, chRotation, i+1);
-					string name = spawnedCharacter.name;
-					Debug.Log(name);
-
 					PlayerUber player;
-
+					StatusMaker statusMaker = new StatusMaker();
+					string name = spawnedCharacter.name;
 					switch (name){
 						case "Witch":
 							player = gameManagerDelJuego.witch;
+							statusMaker.SetPlayer(1, player);
 							break;
 						case "RiceMan":
 							player = gameManagerDelJuego.ricemonk;
+							statusMaker.SetPlayer(4, player);
 							break;
 						case "Samurai":
 							player = gameManagerDelJuego.samurai;
+							statusMaker.SetPlayer(2, player);
 							break;
 						case "Undead":
 							player = gameManagerDelJuego.undead;
+							statusMaker.SetPlayer(3, player);
 							break;
 						default:
 							player = gameManagerDelJuego.witch;
+							statusMaker.SetPlayer(1, player);
 							break;
 					}
 
@@ -54,17 +59,10 @@ public class SpawnInit : MonoBehaviour {
 		}
 
 		SceneManager.LoadScene ( "Dice", LoadSceneMode.Additive);
-		GameObject nodesType = GameObject.FindGameObjectWithTag("nodesType");
-		if (nodesType){
-			nodesType.transform.GetChild(0).gameObject.SetActive(true);
-		}
-
 		gameManagerDelJuego.firstLoadMainScene = false;
 	}
 
 	public static void SetPlayerAttributes(PlayerUber player, Saviour script){
-		Debug.Log(player);
-		Debug.Log(script);
 		if (player != null) {
 			script.maxhp = player.maxhp;
 			script.hp = player.hp;
@@ -76,6 +74,7 @@ public class SpawnInit : MonoBehaviour {
 			script.exp = player.exp;
 			script.maxExp = player.maxExp;
 			script.money = player.money;
+			script.turnsToSkip = player.turnsToSkip;
 			script.fans = player.fans;
 			script.gender = player.gender;
 			script.items = player.items;

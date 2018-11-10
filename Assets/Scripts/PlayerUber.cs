@@ -27,6 +27,8 @@ public class PlayerUber {
     public int maxExp;
     //money
     public int money = 0;
+    //money
+    public int turnsToSkip = 0;
     //fans
     public int fans = 0;
     //Gender
@@ -49,9 +51,27 @@ public class PlayerUber {
     public void LevelUp()
     {
         ApplyLevelUp(this.level.LevelUP(this.lv));
-        this.exp = this.exp - this.maxExp;
+        this.exp = 0;
         this.maxExp = level.MaxExp(this.maxExp);
         this.lv++;
+    }
+
+    public int NumLVUP(int expplus)
+    {
+        if (expplus==-1)
+        {
+            return 1;
+        }
+        int localexp = this.exp+expplus;
+        int levelcounter = 0;
+        int tempmax = this.maxExp;
+        while (localexp>=tempmax)
+        {
+            localexp = localexp - tempmax;
+            levelcounter++;
+            tempmax = level.MaxExp(tempmax);
+        }
+        return levelcounter;
     }
 
     public void ApplyLevelUp(int[] arr)
@@ -61,6 +81,13 @@ public class PlayerUber {
         this.ap += arr[2];
         this.dp += arr[3];
         this.sp += arr[4];
+    }
+
+    public float ExpPercentage()
+    {
+        float lol = (float)this.exp / this.maxExp;
+        //Debug.Log(lol);
+        return lol;
     }
 
     #endregion
@@ -140,10 +167,10 @@ public class PlayerUber {
 
     //Method to use item A.K.A. remove item from bag
     // ONLY FOR HP, for other perks please use perks.
-    public void UseItem(int itemNo)
+    public int UseItem(int itemNo)
     {
-        RecalculateHealth(1, items.GetItem(itemNo).perks[0]);
         items.UseItem(itemNo);
+        return Math.Abs(items.GetItem(itemNo).perks[0]);
     }
 
     //Method to add items to the bag.
@@ -155,6 +182,11 @@ public class PlayerUber {
     //To list my Items on the Inventory
     public ItemRPG[] GetItems() {
         return items.GetMyItems();
+    }
+
+    public string GetItemName(int itmo)
+    {
+        return items.GetItem(itmo).name;
     }
 
 	#endregion
@@ -258,12 +290,30 @@ public class PlayerUber {
 
     #endregion
 
+    #region fans
+
+    //Method to recalculate fans 
+    public void RecalculateFans(int fan)
+    {
+        int tempMoney = this.fans + fan;
+        this.fans = tempMoney > 0 ? tempMoney : 0;
+    }
+
+    #endregion
+
     #region Wealth
 
     //Method to recalculate wealth based on a new wealth
     public void RecalculateWealth(int newWealth)
     {
         this.money = newWealth;
+    }
+
+    //Method to recalculate wealth 
+    public void RecalculateFightWealth(int wealth)
+    {
+        int tempMoney = this.money + wealth;
+        this.money = tempMoney > 0 ? tempMoney : 0;
     }
 
 
@@ -338,7 +388,7 @@ public class PlayerUber {
         System.Random randomizerMax = new System.Random();
         int rr = randomizerMax.Next(0, 100);
         rr -= this.sp;
-        if (rr < 90)
+        if (rr < 80)
         {
             return false;
         }
@@ -379,7 +429,7 @@ public class PlayerUber {
         sp = 6;
         lv = 1;
         gender = gen;
-        money = 200;
+        money = 2000;
         fans = 50;
         exp = 0;
         maxExp = 5;
@@ -398,7 +448,7 @@ public class PlayerUber {
         sp = 10;
         lv = 1;
         gender = gen;
-        money = 200;
+        money = 2000;
         fans = 50;
         exp = 0;
         maxExp = 5;
@@ -417,7 +467,7 @@ public class PlayerUber {
         sp = 16;
         lv = 1;
         gender = gen;
-        money = 200;
+        money = 2000;
         fans = 50;
         exp = 0;
         maxExp = 5;
@@ -436,7 +486,7 @@ public class PlayerUber {
         sp = 8;
         lv = 1;
         gender = gen;
-        money = 200;
+        money = 2000;
         fans = 50;
         exp = 0;
         maxExp = 5;

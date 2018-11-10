@@ -2,6 +2,7 @@
 //For documentation please refer to itemsForHumans.txt
 using System;
 using System.Collections;
+using UnityEngine;
 using System.Collections.Generic;
 
 //This class holds the players current Items, in integer format.
@@ -72,17 +73,21 @@ public class PlayerItems
         return myArr.ToArray();
     }
 
-    //Method to use item A.K.A. remove item from bag
-    public void UseItem(int itemNo)
+	//Method to use item A.K.A. remove item from bag
+	public void UseItem(int itemNo)
     {
-        if (myItems.ContainsKey(itemNo) && myItems[itemNo].itemQ > 1)
-        {
-            myItems[itemNo].itemQ -= 1;
+        //string itemK = itemNo.ToString();
+        Debug.Log("Got Here:" + itemNo);
+		if (this.myItems.ContainsKey(itemNo) && this.myItems[itemNo].itemQ > 1) {
+			this.myItems[itemNo].itemQ -= 1;
+            Debug.Log("removed item:" + this.myItems[itemNo].itemQ);
+
         }
-        else
-        {
-            myItems.Remove(itemNo);
-        }
-    }
+        else {
+			this.myItems.Remove(itemNo);
+		}
+
+
+	}
 
 }

@@ -16,6 +16,7 @@ public class Store
     public  int[] itemNumbers;
     public  int[][] itemPower;
     public  int[] itemCosts;
+    Items items = new Items();
 
     public  string[] equipmentNames;
     public  int[] equipmentArea;
@@ -333,8 +334,14 @@ public class Store
         {
             newW = NewWealth(currentWealth, tempCost);
         }
-        string[] thisList = new string[] { status.ToString(), newW.ToString(), itemno.ToString(), textStor };
+        string[] thisList = new string[] { status.ToString(), newW.ToString(), getRelativeItemNo(GetItemName(itemno)).ToString(), textStor };
         return thisList;
+    }
+
+    //To get the absolut value of item to buy
+    public int getRelativeItemNo(string itemName)
+    {
+        return items.GetItemNoByName(itemName);
     }
 
     //Return needed dat for buying an object:
@@ -385,6 +392,12 @@ public class Store
     public int GetItemCost(int itemNo)
     {
         return itemCosts[itemNo];
+    }
+
+    //To Get item cost
+    public string GetItemName(int itemNo)
+    {
+        return itemNames[itemNo];
     }
 
     //To Get EquipmentCost and index

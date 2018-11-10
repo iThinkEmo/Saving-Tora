@@ -12,6 +12,8 @@ public class SelectNode : MonoBehaviour {
 	public static int spacesLeft;
 	int typeOfSpace;
 
+	public static string[] innDialogue, hospitalDialogue;
+
 	// Use this for initialization
 	void Start () {
 		gameManagerDelJuego = GameManager.Instance;
@@ -20,19 +22,29 @@ public class SelectNode : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (Dice.finishedBouncing) {
-			
 			if (spacesLeft == 0) {
 				HideSpacesLeftBtn();
 				ShowConfirmSpaceBtn();
-				if (Input.GetKeyDown(KeyCode.Y)) {
+				if (Input.GetKeyDown(KeyCode.Y) || Input.GetKeyDown(KeyCode.Return)) {
 					LoadSpecialEventProxy();
-				} else if (Input.GetKeyDown(KeyCode.N)) {
+				} else if (Input.GetKeyDown(KeyCode.N) || Input.GetKeyDown(KeyCode.Backspace)) {
 					MoveBackCurrentPlayer();
 				}
 			} else {
 				MoveForwardCurrentPlayer();
 			}
-			
+		} else if (SpecialGameEvents.innInteraction){
+			if (Input.GetKeyDown(KeyCode.Y) || Input.GetKeyDown(KeyCode.Return)) {
+				RestAtTheInn();
+			} else if (Input.GetKeyDown(KeyCode.N) || Input.GetKeyDown(KeyCode.Backspace)) {
+				NoVacancy();
+			}
+		} else if (SpecialGameEvents.hospitalInteraction){
+			if (Input.GetKeyDown(KeyCode.Y) || Input.GetKeyDown(KeyCode.Return)) {
+				UseHospital();
+			} else if (Input.GetKeyDown(KeyCode.N) || Input.GetKeyDown(KeyCode.Backspace)) {
+				RefuseHospital();
+			}
 		}
 	}
 
@@ -44,14 +56,38 @@ public class SelectNode : MonoBehaviour {
 			}
 		}
 	}
-	void HideConfirmSpaceBtn(){
-		GameObject confirmSpaceBtn = GameObject.FindGameObjectWithTag("confirmSpace");
-		if(confirmSpaceBtn){
-			for (int i = 0; i < confirmSpaceBtn.transform.childCount; i++){
-				confirmSpaceBtn.transform.GetChild(i).gameObject.SetActive(false);
+
+	void ShowConfirmStayNightBtn(){
+		GameObject spendNightBtn = GameObject.FindGameObjectWithTag("spendNight");
+		if(spendNightBtn){
+			for (int i = 0; i < spendNightBtn.transform.childCount; i++){
+				spendNightBtn.transform.GetChild(i).gameObject.SetActive(true);
 			}
 		}
 	}
+
+	void ShowConfirmHealthCareBtn(){
+		GameObject healthCareBtn = GameObject.FindGameObjectWithTag("healthCare");
+		if(healthCareBtn){
+			for (int i = 0; i < healthCareBtn.transform.childCount; i++){
+				healthCareBtn.transform.GetChild(i).gameObject.SetActive(true);
+			}
+		}
+	}
+
+	void HideConfirmSpaceBtn(){
+		GameObject confirmSpaceBtn = GameObject.FindGameObjectWithTag("confirmSpace");
+		GameObject spendNightBtn = GameObject.FindGameObjectWithTag("spendNight");
+		GameObject healthCareBtn = GameObject.FindGameObjectWithTag("healthCare");
+		if(confirmSpaceBtn){
+			for (int i = 0; i < confirmSpaceBtn.transform.childCount; i++){
+				confirmSpaceBtn.transform.GetChild(i).gameObject.SetActive(false);
+				spendNightBtn.transform.GetChild(i).gameObject.SetActive(false);
+				healthCareBtn.transform.GetChild(i).gameObject.SetActive(false);
+			}
+		}
+	}
+
 	public static void ShowSpacesLeftBtn(){
 		GameObject dialogText = GameObject.FindGameObjectWithTag("spacesLeft");
 		if (dialogText){
@@ -101,31 +137,41 @@ public class SelectNode : MonoBehaviour {
 
 			HideConfirmSpaceBtn();
 
-			//Pelea:0,Tienda:1,Cofre:2,Hospital:3,Fabrica:4,Inn:5
+			//Pelea:0,Tienda:1,Cofre:2,Hospital:3,Inn:4,Fábrica:5
 			string character = gameManagerDelJuego.idCharacter[currentPlayer];
 			GameObject currentCharacter = GameObject.Find(character);
 			if (currentCharacter){
 				Saviour saviour = currentCharacter.GetComponent<Saviour>();
+				
 				gameManagerDelJuego.currentSaviour = saviour;
 				if (saviour) {
 					typeOfSpace = NodesMap.nodesArray[saviour.currentNode, 4];
-					Debug.Log("TypeOfSpace: "+typeOfSpace);
-					PlayerUber player = gameManagerDelJuego.PlayerUberSaviour();
+					
+					// This is ok, and tested. Do not move or change.
+					PlayerUber player = gameManagerDelJuego.GetPlayerUber();
+
 					switch (typeOfSpace) {
 						case 0:
-							StartCoroutine(LoadNextPlayer());
-							currentPlayer = PlayerUber.normalizeCurrentPlayer(currentPlayer);
-							//LoadFightScene();
+							//StartCoroutine(LoadNextPlayer());
+							
+							ResetPila(saviour);
+							ActivateCharacters(false);
+							LoadFightScene(saviour, player);
 							break;
 						case 1:
+							ResetPila(saviour);
+							ActivateCharacters(false);
 							LoadStoreScene(saviour, player);
 							break;
 						case 2:
+							ResetPila(saviour);
 							GiveMeSomeMoney(saviour, player);
 							break;
 						case 3:
+							GiveMeHealthCare(saviour, player);
 							break;
 						case 4:
+							GiveMeSomeRest(saviour, player);
 							break;
 						case 5:
 							break;
@@ -138,7 +184,35 @@ public class SelectNode : MonoBehaviour {
 		}		
 	}
 
+	public void LoadFightScene(Saviour saviour, PlayerUber player){
+		int cp = PlayerUber.normalizeCurrentPlayer(currentPlayer);
+
+		// Guarda el número de jugador
+		StatusMaker sm = new StatusMaker(cp, 1, 0);
+		sm.MakeAndPostJSONFight();
+		
+		sm.SetPlayer(cp, player);
+		gameManagerDelJuego.currentSaviour = saviour;
+
+		Dice.finishedBouncing = false;
+
+		bool firstTimeTutorial = gameManagerDelJuego.firstTimeTutorial[gameManagerDelJuego.GetCurrentPlayer()-1];
+		if (firstTimeTutorial){
+			// Este jugador ya vio por primera vez el tutorial de la pelea
+			gameManagerDelJuego.firstTimeTutorial[gameManagerDelJuego.GetCurrentPlayer()-1] = false;
+			gameManagerDelJuego.NombreNivelQueSeVaCargar = "Tutorial";
+        	SceneManager.LoadScene("PantallaCargandoLoadingScreen");
+		} else{
+			gameManagerDelJuego.NombreNivelQueSeVaCargar = "FightScene";
+        	SceneManager.LoadScene("PantallaCargandoLoadingScreen");
+		}
+        
+    }
 	public static IEnumerator LoadNextPlayer(){
+		// En el caso de que regrese de la pelea o de la tienda,
+		// vuelve a prender a los objetos 
+		SelectNode.ActivateCharacters(true);
+
 		gameManagerDelJuego.nextPlayer();
 		currentPlayer = gameManagerDelJuego.GetCurrentPlayer();
 
@@ -148,18 +222,17 @@ public class SelectNode : MonoBehaviour {
 		LookAt.LookAtNextCharacter(character, characterArm);
 
 		SceneManager.LoadScene ( "Dice", LoadSceneMode.Additive);
-		Debug.Log("algo 1");
 		yield return null;
 		yield return null;
 
-		Debug.Log("algo 2");
 		GameObject currentCharacter = GameObject.Find(character);
-		Debug.Log(currentCharacter);
+		Debug.Log(character);
 		if (currentCharacter){
 			Saviour saviour = currentCharacter.GetComponent<Saviour>();
 			if (saviour) {
-				int area = NodesMap.nodesArea["Node "+saviour.currentNode];
-				Debug.Log(NodesMap.areaName[area]);
+				// int area = NodesMap.nodesArea["Node "+saviour.currentNode];
+				// Debug.Log(NodesMap.areaName[area]);
+				Debug.Log("Node "+saviour.currentNode);
 				GameObject node = GameObject.Find("Node "+saviour.currentNode);
 				if (node){
 					GameObject dice = GameObject.FindGameObjectWithTag("Dice");
@@ -175,18 +248,57 @@ public class SelectNode : MonoBehaviour {
 		}
 	}
 
+	public void MoveForwardCurrentPlayer(){
+		PlayerUber player = gameManagerDelJuego.GetPlayerUber();
+		Saviour saviour = gameManagerDelJuego.GetCurrentSaviour();
+		Debug.Log("Turns to skip :"+ player.turnsToSkip);
+		Debug.Log("CP: "+currentPlayer);
+		if (player.turnsToSkip == 0){
+			//se obtiene el jugador para saber cuál mover
+			currentPlayer = gameManagerDelJuego.GetCurrentPlayer();
+			GameObject characters = GameObject.FindGameObjectWithTag("Characters");
+			if (characters){
+				Saviour script = characters.transform.GetChild(currentPlayer-1).GetComponent<Saviour>();
+				if (script.gameObject == this.gameObject){
+					GetMovement(script);
+				}
+			}
+		}
+		// Quiere decir que este jugador debe pasar un turno, pues perdió en batalla
+		else{
+			NotYetYourTurn(player);
+		}
+	}
+
+	public void NotYetYourTurn(PlayerUber player){	
+
+		GameObject stayTurn = GameObject.FindGameObjectWithTag("stayTurn");
+		if (stayTurn){
+			
+			GameObject timeline = stayTurn.transform.GetChild(2).gameObject;
+			GameObject dialogText = stayTurn.transform.GetChild(1).gameObject;
+			dialogText.GetComponent<Text>().text = 
+				gameManagerDelJuego.orderedPlayers[0] + " is still recovering from that horrid fight.";
+			timeline.SetActive(true);
+
+			player.turnsToSkip --;
+			StatusMaker sm = new StatusMaker();
+			sm.SetPlayer(PlayerUber.normalizeCurrentPlayer(currentPlayer), player);
+			
+			HideSpacesLeftBtn();
+			StartCoroutine(LoadNextPlayer());
+		}
+	}
+
 	public void LoadStoreScene(Saviour saviour, PlayerUber player){
 
 		// currentplayer, area, typeOfFight = 3 (STORE)
 		StatusMaker sm = new StatusMaker(currentPlayer, 1, 3);
 		sm.MakeAndPostJSONFight();
 		sm.SetPlayer(PlayerUber.normalizeCurrentPlayer(currentPlayer), player);
-		Debug.Log("savage: "+saviour);
 		gameManagerDelJuego.currentSaviour = saviour;
 
-		// Hay que arreglar esto porque cuando se carga BuyStuff al crear la escena
-		// se vuelve a setear el valor de null
-		// Quizás lo mejor sería tener una referencia en GameManager y hacer un GetCurrentSaviour
+		Dice.finishedBouncing = false;
 		
         gameManagerDelJuego.NombreNivelQueSeVaCargar = "Store";
         SceneManager.LoadScene("PantallaCargandoLoadingScreen");
@@ -200,7 +312,8 @@ public class SelectNode : MonoBehaviour {
 				coins.transform.position = node.transform.position;
 				coins.transform.Translate(0, 1.34f, 0, Space.World);
 				SpecialGameEvents specialGameEvents = new SpecialGameEvents();
-				string[] text = specialGameEvents.ChestInteraction(1, player, saviour);
+				string[] text = specialGameEvents.ChestInteraction(1, player, saviour, currentPlayer);
+				Debug.Log("Dinero: "+player.money);
 				GameObject coinsGO = coins.transform.GetChild(0).gameObject;
 				StartCoroutine(PlayCoinAnimation(coinsGO, text));
 			}
@@ -227,7 +340,6 @@ public class SelectNode : MonoBehaviour {
 				yield return null;
 			}
 
-			Debug.Log("Done Playing");
 			coins.SetActive(false);
 			goldBox.SetActive(false);
 			textGold.SetActive(false);
@@ -235,40 +347,64 @@ public class SelectNode : MonoBehaviour {
 		}
 		
 	}
-
-	public void LoadFightScene(){
-		// Guarda el numero de jugador
-		StatusMaker sm = new StatusMaker(currentPlayer, 1, 0);
-		sm.MakeAndPostJSONFight();
-		// Guarda el jugador en un json 
-		PlayerUber pu = new PlayerUber(currentPlayer);
-		sm.SetPlayer(currentPlayer, pu);
-
-        gameManagerDelJuego.NombreNivelQueSeVaCargar = "FightScene";
-        SceneManager.LoadScene("PantallaCargandoLoadingScreen");
-    }
-
 	
-	
+	public void GiveMeHealthCare(Saviour saviour, PlayerUber player){
+		Dice.finishedBouncing = false;
+		SpecialGameEvents specialGameEvents = new SpecialGameEvents();
+		string[] text = specialGameEvents.HospitalInteraction(false);
+		hospitalDialogue = text;
+		
+		GameObject healthCare = GameObject.FindGameObjectWithTag("healthCare");
+		if (healthCare){
+			for (int i=0; i<healthCare.transform.childCount; i++){
+				healthCare.transform.GetChild(i).gameObject.SetActive(true);
+			}
+			GameObject textInn = healthCare.transform.GetChild(1).gameObject;
+			textInn.GetComponent<Text>().text = hospitalDialogue[0];
+		}	
+	}
 
-	
+	public void GiveMeSomeRest(Saviour saviour, PlayerUber player){
+		Dice.finishedBouncing = false;
+		int area = NodesMap.nodesArea["Node " + saviour.currentNode];
 
-	
+		SpecialGameEvents specialGameEvents = new SpecialGameEvents();
+		string[] text = specialGameEvents.InnInteraction(area);
+		innDialogue = text;
 
-	public void MoveForwardCurrentPlayer(){
-		//se obtiene el jugador para saber cuál mover
-		currentPlayer = gameManagerDelJuego.GetCurrentPlayer();
+		GameObject spendNight = GameObject.FindGameObjectWithTag("spendNight");
+		if (spendNight){
+			for (int i=0; i<spendNight.transform.childCount; i++){
+				spendNight.transform.GetChild(i).gameObject.SetActive(true);
+			}
+			GameObject textInn = spendNight.transform.GetChild(1).gameObject;
+			textInn.GetComponent<Text>().text = innDialogue[0] + "\n" + innDialogue[1] + innDialogue[2];
+		}
+	}
+
+	private static void ResetPila(Saviour saviour){
+		saviour.pila.Clear();
+		saviour.oldNode = saviour.currentNode;
+		// Hacer el setup inicial para que no dé la condición de oldNode != currentNode
+	}
+
+	public static void ActivateCharacters(bool show){
 		GameObject characters = GameObject.FindGameObjectWithTag("Characters");
 		if (characters){
-			Saviour script = characters.transform.GetChild(currentPlayer-1).GetComponent<Saviour>();
-			if (script.gameObject == this.gameObject){
-				GetMovement(script);
+			// - 1 porque tenemos al ShopKeeper.
+			for (int i = 0; i < characters.transform.childCount - 1; i++){
+				GameObject spawnedCharacter = characters.transform.GetChild(i).gameObject;
+				if(gameManagerDelJuego.playerDictionary.ContainsValue(i+1)){
+					spawnedCharacter.SetActive(show);
+				}
 			}
 		}
 	}
 
+	
+
 	public void MoveBackCurrentPlayer(){
-		
+
 		HideConfirmSpaceBtn();
 		ShowSpacesLeftBtn();
 
@@ -282,12 +418,166 @@ public class SelectNode : MonoBehaviour {
 				script.MoveBack();
 			}
 		}
+	}
 
+	public void UseHospital(){
+		HideConfirmHospitalBtn();
+		StartCoroutine(DisplayHospitalMsg(hospitalDialogue[1], true));
+	}
+
+	public void RefuseHospital(){
+		HideConfirmHospitalBtn();
+		StartCoroutine(DisplayHospitalMsg(hospitalDialogue[2], false));
+	}
+
+	/// <summary>
+	/// Displays the corresponding message depending on the player choice
+	/// of spending the night in the Inn or going one space back.
+	/// /<sumamary> 
+	public IEnumerator DisplayHospitalMsg(string message, bool stay){
+		Saviour saviour = gameManagerDelJuego.GetCurrentSaviour();
+		PlayerUber player = gameManagerDelJuego.GetPlayerUber();
+
+		if (saviour.gameObject != this.gameObject){
+			yield break;
+		}
+		yield return null;
+
+		// En este punto ya se sabe que hay solo una instancia de SelectNode activa
+		// Las demás instancias ya se "salieron" debido al yield break;
+
+		GameObject useHospital = GameObject.FindGameObjectWithTag("healthCare");
+		if (useHospital){
+			GameObject textInn = useHospital.transform.GetChild(1).gameObject;
+			textInn.GetComponent<Text>().text = message;
+		}
+
+		float counter = 0;
+		float waitTime = 1.50f;
+
+		while (counter < (waitTime)){
+			counter += Time.deltaTime;
+			yield return null;
+		}
+
+		if (useHospital){
+			useHospital.transform.GetChild(0).gameObject.SetActive(false);
+			useHospital.transform.GetChild(1).gameObject.SetActive(false);
+		}
+
+		SpecialGameEvents.hospitalInteraction = false;
+
+		if (stay){
+	        SpecialGameEvents.RecoverHealth(player, saviour, currentPlayer);
+			Debug.Log(player.hp);
+			Debug.Log(saviour.hp);
+			player.turnsToSkip = 2;
+			saviour.turnsToSkip = 2;
+			// Se guardan los cambios en el JSON para que puedan ser cargados
+			// Siempre que se utilice el gameManagerDelJuego.GetPlayerUber();
+			StatusMaker sm = new StatusMaker();
+			sm.SetPlayer(PlayerUber.normalizeCurrentPlayer(currentPlayer), player);
+		}
+		ResetPila(gameManagerDelJuego.currentSaviour);
+		StartCoroutine(LoadNextPlayer());
+	}
+
+	public void RestAtTheInn(){
+		HideConfirmNightBtn();
+		StartCoroutine(DisplayInnMsg(innDialogue[3], true));
+	}
+
+	public void NoVacancy(){
+		HideConfirmNightBtn();
+		StartCoroutine(DisplayInnMsg(innDialogue[4], false));
+	}
+
+	/// <summary>
+	/// Checks if the current saviour has enough money for staying in the Inn
+	/// If he does, then his wealth is decreased by _nightCost_
+	/// If he doesn't, then he shall return one space.
+	/// /<sumamary> 
+	public bool HasEnoughMoney(int nightCost){
+		return gameManagerDelJuego.GetCurrentSaviour().money>=nightCost;
+	}
+
+	/// <summary>
+	/// Displays the corresponding message depending on the player choice
+	/// of spending the night in the Inn or going one space back.
+	/// /<sumamary> 
+	public IEnumerator DisplayInnMsg(string message, bool stay){
+		Saviour saviour = gameManagerDelJuego.GetCurrentSaviour();
+		PlayerUber player = gameManagerDelJuego.GetPlayerUber();
+
+		if (saviour.gameObject != this.gameObject){
+			yield break;
+		}
+		yield return null;
+
+		// En este punto ya se sabe que hay solo una instancia de SelectNode activa
+		// Las demás instancias ya se "salieron" debido al yield break;
+
+		if (stay && !HasEnoughMoney(SpecialGameEvents.nightCost)){
+			message = innDialogue[5];
+			stay = false;
+		}
+
+		GameObject spendNight = GameObject.FindGameObjectWithTag("spendNight");
+		if (spendNight){
+			GameObject textInn = spendNight.transform.GetChild(1).gameObject;
+			textInn.GetComponent<Text>().text = message;
+		}
+
+		float counter = 0;
+		float waitTime = 1.50f;
+
+		while (counter < (waitTime)){
+			counter += Time.deltaTime;
+			yield return null;
+		}
+
+		if (spendNight){
+			spendNight.transform.GetChild(0).gameObject.SetActive(false);
+			spendNight.transform.GetChild(1).gameObject.SetActive(false);
+		}
+
+		SpecialGameEvents.innInteraction = false;
+
+		if (stay){
+			saviour.money -= SpecialGameEvents.nightCost;
+			player.money -= SpecialGameEvents.nightCost;
+	        SpecialGameEvents.RecoverHealth(player, saviour, currentPlayer);
+			ResetPila(gameManagerDelJuego.currentSaviour);
+			StartCoroutine(LoadNextPlayer());
+			// Implementar el pasar turno
+		}
+		else{
+			Dice.finishedBouncing = true;
+			MoveBackCurrentPlayer();
+		}
+	}
+
+	public void HideConfirmNightBtn(){
+		GameObject spendNight = GameObject.FindGameObjectWithTag("spendNight");
+		if (spendNight){
+			spendNight.transform.GetChild(2).gameObject.SetActive(false);
+			spendNight.transform.GetChild(3).gameObject.SetActive(false);
+		}
+	}
+
+	public void HideConfirmHospitalBtn(){
+		GameObject healthCare = GameObject.FindGameObjectWithTag("healthCare");
+		if (healthCare){
+			healthCare.transform.GetChild(2).gameObject.SetActive(false);
+			healthCare.transform.GetChild(3).gameObject.SetActive(false);
+		}
 	}
 
 	void OnEnable(){
 		ShowConfirmSpaceBtn();
-
+		ShowConfirmStayNightBtn();
+		ShowConfirmHealthCareBtn();
+		
 		GameObject moveBackBtn = GameObject.FindGameObjectWithTag("moveBack");
 		if(moveBackBtn){
 			Button btn = moveBackBtn.GetComponent<Button>();
@@ -298,6 +588,30 @@ public class SelectNode : MonoBehaviour {
 		if(stayHereBtn){
 			Button btn = stayHereBtn.GetComponent<Button>();
 			btn.onClick.AddListener(LoadSpecialEventProxy);
+		}
+
+		GameObject stayNightkBtn = GameObject.FindGameObjectWithTag("stayNight");
+		if(stayNightkBtn){
+			Button btn = stayNightkBtn.GetComponent<Button>();
+			btn.onClick.AddListener(RestAtTheInn);
+		}
+
+		GameObject refuseNightBtn = GameObject.FindGameObjectWithTag("refuseNight");
+		if(refuseNightBtn){
+			Button btn = refuseNightBtn.GetComponent<Button>();
+			btn.onClick.AddListener(NoVacancy);
+		}
+
+		GameObject useHospitalBtn = GameObject.FindGameObjectWithTag("useHospital");
+		if(useHospitalBtn){
+			Button btn = useHospitalBtn.GetComponent<Button>();
+			btn.onClick.AddListener(UseHospital);
+		}
+
+		GameObject refuseHospitalBtn = GameObject.FindGameObjectWithTag("refuseHospital");
+		if(refuseHospitalBtn){
+			Button btn = refuseHospitalBtn.GetComponent<Button>();
+			btn.onClick.AddListener(RefuseHospital);
 		}
 
 		HideConfirmSpaceBtn();

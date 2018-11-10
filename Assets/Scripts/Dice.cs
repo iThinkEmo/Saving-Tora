@@ -16,8 +16,9 @@ public class Dice : MonoBehaviour{
 	public GameObject starSparks, dice;
 
 	private GameManager gameManagerDelJuego;
-	
+
 	void Start(){
+		gameManagerDelJuego = GameManager.Instance;
 		finishedBouncing = false;
 	}
 	void Update() {
@@ -31,17 +32,21 @@ public class Dice : MonoBehaviour{
 		if (rolling && Input.GetKeyDown(KeyCode.Space)) {
 			TossDice();
 		}
-		
+
 	}
 
 	void TossDice() {
-		gameManagerDelJuego = GameManager.Instance;
+		gameManagerDelJuego.BanderaYaSeDecidioCurrentPlayer = true;
+
 		int currentPlayer = gameManagerDelJuego.GetCurrentPlayer();
 		string character = gameManagerDelJuego.idCharacter[currentPlayer];
 		string characterArm = character.ToLower()+"Arm";
-		Debug.Log(character);
-		Debug.Log(characterArm);
 		LookAt.LookAtNextCharacter(character, characterArm);
+
+		GameObject nodesType = GameObject.FindGameObjectWithTag("nodesType");
+		if (nodesType){
+			nodesType.transform.GetChild(0).gameObject.SetActive(true);
+		}
 
 		rolling = false;
 		finishedBouncing = false;
@@ -51,7 +56,7 @@ public class Dice : MonoBehaviour{
 		anim.SetInteger("side", side);
 
 		// SelectNode.spacesLeft = side;
-		SelectNode.spacesLeft = 6;
+		SelectNode.spacesLeft = 12;
 
 		Vector3 force = Vector3.up * Random.Range(360.0f, 380.0f);
 		rb.AddForce(force);

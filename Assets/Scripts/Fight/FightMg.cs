@@ -8,15 +8,114 @@ using UnityEngine.UI;
 
 
 //Class Responsible for the actual fight
-class FightMg : MonoBehaviour
-{
+class FightMg : MonoBehaviour {
     string thisMagi;
 
-    //To be used with the button
-    public void ItemsButton()
-    {
-        string yes = "Not Yet m8";
+	public GameObject button;
+	public GameObject parent;
+	private int count = 0;
+	public string nameItem = "";
+
+	public GameManager gameManagerDelJuego;
+	public PlayerUber player;
+
+	public GameObject DescText;
+
+	private GameObject menu;
+    StatusMaker sm = new StatusMaker();
+
+	public void ItemsButton(){
+		
+		DescText = GameObject.Find("DescText");
+
+
+		ItemRPG[] itemsPlayer = player.GetItems();
+		count = itemsPlayer.Length;
+
+		for (int i=0; i<count;i++) {
+			GameObject magicBtn = Instantiate(button, parent.transform);
+			if (magicBtn) {
+				FigthBtn smb = magicBtn.GetComponent<FigthBtn>();
+				if (smb) {
+					smb.id = i;
+					smb.label.text = itemsPlayer[i].name;
+					
+				}
+			}
+		}
+		
     }
+
+	public int itemSelected()
+    {
+        int num;
+        SpawnCHANDE sc = GameObject.Find("Spawn").GetComponent<SpawnCHANDE>();
+		if (nameItem.Equals("")) {
+			DescText.GetComponent<Text>().text = "Select an item";
+            num = 0;
+		} else {
+			ItemRPG[] itemsPlayer = player.GetItems();
+
+			num = getItemNum(itemsPlayer);
+            PlayerUber playerStats = gameManagerDelJuego.GetPlayerUber();
+            //hpMove = playerStats.UseItem(num);
+            //sc.playerStats.hp += hpMove;
+			deleteChildren();
+            //Debug.Log(playerStats.items.myItems[1].itemQ);
+            //sm.SetPlayer(PlayerUber.normalizeCurrentPlayer(gameManagerDelJuego.GetCurrentPlayer()), playerStats);
+
+            nameItem = "";
+			DescText.GetComponent<Text>().text = "";
+			
+			//sc.playerStats = this.player;
+			menu = GameObject.Find("MenuItems");
+			menu.SetActive(false);
+			sc.MenuBool = true;
+			sc.itemSelected();
+		}
+        return num;
+    }
+
+    public void quitMenu() {
+		menu = GameObject.Find("MenuItems");
+		nameItem = "";
+		DescText.GetComponent<Text>().text = "";
+		deleteChildren();
+		menu = GameObject.Find("MenuItems");
+		menu.SetActive(false);
+	}
+
+	private int getItemNum(ItemRPG[] itemsPlayer) {
+		int itemNum = 0;
+
+		int i = 0;
+		while (!itemsPlayer[i].name.ToLower().Equals(nameItem.ToLower())) {
+			i++;
+		}
+		itemNum = itemsPlayer[i].itemNum;
+
+		
+
+		return itemNum;
+	}
+
+	public void showInfo() {
+
+		int i = 0;
+		ItemRPG[] itemsPlayer = player.GetItems();
+
+		while (!itemsPlayer[i].name.ToLower().Equals(nameItem.ToLower())) {
+			i++;
+		}
+		DescText.GetComponent<Text>().text = itemsPlayer[i].description;
+
+	}
+
+	private void deleteChildren() {
+		foreach (Transform child in parent.transform) {
+			GameObject.Destroy(child.gameObject);
+		}
+	}
 
     //To be used with the button
     public string[] AttackButton()
@@ -32,7 +131,8 @@ class FightMg : MonoBehaviour
         string[] attres =  AttackResults(p1DMG,e1DMG);
         int[] results = ResultsCalculator(p1DMG,e1DMG);
         p1.RecalculateHealth(0,results[1]);
-        e1.RecalculateHealth(0, results[0] - (e1.dp ));
+        int maxPower = ((results[0] - (e1.dp)) > 0) ? (results[0] - (e1.dp)) : 4;
+        e1.RecalculateHealth(0, maxPower);
         mk1.SetPlayer(i,p1);
         mk1.SetMonster(i, e1);
 
@@ -49,6 +149,11 @@ class FightMg : MonoBehaviour
         int i = Starter(mk1);
         PlayerUber p1 = StarterP(i, mk1);
         EnemyClass e1 = StarterE(i, mk1);
+
+        
+        Debug.Log(mk1.fStat.area);
+        Debug.Log(mk1.fStat.currentPlayer);
+        Debug.Log(mk1.fStat.typeOfFight);
 
         int p1DMG = p1.Defend();
         int eStat = e1.AttackPower();
@@ -81,7 +186,8 @@ class FightMg : MonoBehaviour
         int[] results = ResultsCalculator(p1DMG, e1DMG);
 
         p1.RecalculateHealth(0, results[1]);
-        e1.RecalculateHealth(0, results[0]-(e1.dp));
+        int maxPower = ((results[0] - (e1.dp)) > 0) ? (results[0] - (e1.dp)) : 4;
+        e1.RecalculateHealth(0, maxPower);
         mk1.SetPlayer(i, p1);
         mk1.SetMonster(i, e1);
         int maginum = p1DMG[0];
@@ -106,6 +212,7 @@ class FightMg : MonoBehaviour
     //-1,-1 means failed flee
     public string[] Flee()
     {
+        bool fleer = CalculateFlee();
         StatusMaker mk1 = new StatusMaker();
         int i = Starter(mk1);
         PlayerUber p1 = StarterP(i, mk1);
@@ -114,7 +221,7 @@ class FightMg : MonoBehaviour
         int[] p1DMG = {-1,-1};
         int eStat = e1.AttackPower();
         int[] e1DMG = e1.Attack(eStat);
-        string yes = "Failed to flee...";
+        string yes = fleer == true ? "You ran for your life!" : "Failed to flee...";
         int[] results = {0,e1DMG[0] };
         string[] attres = AttackResults(p1DMG, e1DMG);
         p1.RecalculateHealth(0, results[1]);
@@ -123,9 +230,42 @@ class FightMg : MonoBehaviour
         Debug.Log("AL FINAL DE FLEE");
         //(user stat, user action, monster stat, monster action)
         //STATMONSTER(1: defend,2:nothing,3:normal attack,4:critical attack,5: attack missed)
-        //StatUSER   (6 flee fail)
-        return new string[] { "6", yes, eStat.ToString(), attres[1] };
+        //StatUSER   (6 flee fail, 7 successful flee)
+        string deder = fleer == true ? "7" : "6";
+        return new string[] { deder, yes, eStat.ToString(), attres[1] };
 
+    }
+
+    public string[] ITEMER()
+    {
+        StatusMaker mk1 = new StatusMaker();
+        int i = Starter(mk1);
+        PlayerUber p1 = StarterP(i, mk1);
+        EnemyClass e1 = StarterE(i, mk1);
+
+        int[] p1DMG = { 0, 0 };
+        int eStat = e1.AttackPower();
+        int[] e1DMG = e1.Attack(eStat);
+        int[] results = { 0, e1DMG[0] };
+        string[] attres = AttackResults(p1DMG, e1DMG);
+        //p1.RecalculateHealth(0, results[1]);
+        //mk1.SetPlayer(i, p1);
+        //mk1.SetMonster(i, e1);
+        //arr[0] = es el ataque del monstruo
+        return new string[] { results[1].ToString(), "You used ", eStat.ToString(), attres[1] };
+
+    }
+
+    //To calculate if flee is successful
+    public bool CalculateFlee()
+    {
+        System.Random randomizerMax = new System.Random();
+        int rr = randomizerMax.Next(0, 100);
+        if (rr <70)
+        {
+            return true;
+        }
+        return false;
     }
 
     //To get player and such
@@ -174,11 +314,11 @@ class FightMg : MonoBehaviour
         switch (enemy1[1])
         {
             case 1:
-                return "Monster Defended";
+                return "Monster Defended.";
             case 2:
-                return "Monster Was Confused About This Fight So It Did Nothing.";
+                return "Monster Did Nothing.";
             case 3:
-                return "Monster Attacked";
+                return "Monster Attacked.";
             case 4:
                 return "Monster Smashed You!";
             case 5:
@@ -197,7 +337,7 @@ class FightMg : MonoBehaviour
             case 0:
                 return "You Missed.";
             case 1:
-                return "You Attacked";
+                return "You Attacked.";
             case 2:
                 return "You Smashed the monster!";
             default:
@@ -214,9 +354,9 @@ class FightMg : MonoBehaviour
             case 0:
                 return "You Missed.";
             case 1:
-                return "You Used "+magi+" Magic";
+                return "You Used "+magi+" Magi";
             case 2:
-                return "Your" + magi +" Magic Smashed the monster!";
+                return "Your " + magi +" Magi Rocked!";
             default:
                 break;
         }

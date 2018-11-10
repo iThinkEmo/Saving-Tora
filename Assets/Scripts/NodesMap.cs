@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class NodesMap : MonoBehaviour {
 
     //(Valores de Nodos en el quinto Valor)
     //(0:Pelea,1:Tienda,2:Cofre,3:Hospital,4:Inn,5:Fabrica)
 	public static int[,] nodesArray = new int[125, 5] {
-		{1, 0, 0, 0, 0 },
+		{1, 0, 1, 1, 0 },
 		{2, 0, 0, 0, 0 },
 		{3, 1, 0, 0, 0 },
 		{4, 2, 0, 0, 0 },
@@ -260,9 +261,9 @@ public class NodesMap : MonoBehaviour {
         new Vector3(-22.4f, -6.2f, 89.1f),
         new Vector3(43.8f, -6.3f, 45.3f)
     };
-
 	public static Dictionary<string, int> nodesArea = new Dictionary<string, int>
 		{
+			{ "Node 0", 1 },
 			{ "Node 1", 1 },
 			{ "Node 2", 1 },
 			{ "Node 3", 1 },
@@ -388,7 +389,6 @@ public class NodesMap : MonoBehaviour {
 			{ "Node 123", 4 },
 			{ "Node 124", 2 }
 		};
-
 	public static Dictionary<int, string> areaName = new Dictionary<int, string>
 		{
 			{ 1, "Dragon Land" },
@@ -397,14 +397,28 @@ public class NodesMap : MonoBehaviour {
 			{ 4, "LiftHelm Statal Union" }
 		};
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+	public static void DisplayCurrentNode(int node){
+		int typeOfSpace = nodesArray[node, 4];
+		GameObject nodesType = GameObject.FindGameObjectWithTag("nodesType");
+		if (nodesType){
+			GameObject nodes = nodesType.transform.GetChild(0).gameObject;
+			GameObject nodeGO;
+			Image img;
+			Color tempColor;
+			for (int i=1; i<=6; i++){
+				nodeGO = nodes.transform.GetChild(i).gameObject;
+				img = nodeGO.GetComponent<Image>();
+				tempColor = img.color;
+				if (i==typeOfSpace+1){
+					tempColor.a = 1f;
+					img.color = tempColor;
+				}else{
+					tempColor.a = 0.4901961f;
+					img.color = tempColor;
+				}
+			}
+		}
+
 	}
 
 }

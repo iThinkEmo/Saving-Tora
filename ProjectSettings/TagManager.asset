@@ -40,6 +40,14 @@ TagManager:
   - playerFights
   - Coin
   - foundGold
+  - Virtual Camera 1
+  - spendNight
+  - stayNight
+  - refuseNight
+  - healthCare
+  - useHospital
+  - refuseHospital
+  - stayTurn
   layers:
   - Default
   - TransparentFX
@@ -76,4 +84,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: 3d
+    uniqueID: 380315573
     locked: 0

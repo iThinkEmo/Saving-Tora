@@ -7718,7 +7718,7 @@ MonoBehaviour:
     width: 0.2
   m_Looped: 0
   m_Waypoints:
-  - position: {x: -5.5951157, y: 5, z: 2.7015128}
+  - position: {x: -6.894875, y: 5, z: 1.275}
     roll: 0
   - position: {x: 7.350527, y: 5, z: 48.45056}
     roll: 0
@@ -13828,7 +13828,7 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 903377394}
-  m_LocalRotation: {x: -0.05655417, y: 0.17622906, z: 0.0101422435, w: 0.9826709}
+  m_LocalRotation: {x: -0.056554053, y: 0.17622903, z: 0.010142221, w: 0.9826709}
   m_LocalPosition: {x: 43.967453, y: -2.3784187, z: -2.563947}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -20229,7 +20229,7 @@ GameObject:
   - component: {fileID: 1308851217}
   m_Layer: 0
   m_Name: CM vcam1
-  m_TagString: Untagged
+  m_TagString: Virtual Camera 1
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -20283,7 +20283,7 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1308851216}
-  m_LocalRotation: {x: -0.05655417, y: 0.17622906, z: 0.0101422435, w: 0.9826709}
+  m_LocalRotation: {x: -0.056554053, y: 0.17622903, z: 0.010142221, w: 0.9826709}
   m_LocalPosition: {x: 45.57, y: -1.71, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:

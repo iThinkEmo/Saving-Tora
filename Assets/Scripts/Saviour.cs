@@ -29,6 +29,8 @@ public class Saviour : MonoBehaviour {
     public int maxExp;
     //money
     public int money = 0;
+    //money
+    public int turnsToSkip = 0;
     //fans
     public int fans = 0;
     //Gender
@@ -263,7 +265,12 @@ public class Saviour : MonoBehaviour {
 
     #endregion
 
-
+    public float HPPercentage()
+    {
+        float lol = (float)this.hp / this.maxhp;
+        //Debug.Log(lol);
+        return lol;
+    }
 
     public Camera cam;
 	public Animator animator;
@@ -289,17 +296,26 @@ public class Saviour : MonoBehaviour {
     public void Walk(int node, int direction) {
                
 		selectedNode=NodesMap.nodesArray[node, direction];
+        NodesMap.DisplayCurrentNode(selectedNode);
 
+        // Se mueve para adelanta
         if (selectedNode!=oldNode){
             oldNode=currentNode;
             currentNode=selectedNode;
 			SelectNode.spacesLeft--;
             pila.Add(oldNode);
 			Move();
-		} else{
+		}
+        // Se regresa un nodo
+        else{
 		    currentNode=selectedNode;
             SelectNode.spacesLeft++;
-            oldNode = pila[pila.Count - 2];
+            if (pila.Count == 1){
+                oldNode = pila[pila.Count - 1];
+            }
+            else {
+                oldNode = pila[pila.Count - 2];
+            }
             pila.RemoveAt(pila.Count - 1);
 			Move();
 		}
@@ -327,6 +343,7 @@ public class Saviour : MonoBehaviour {
 
     public void MoveBack(){
         selectedNode = oldNode;
+        NodesMap.DisplayCurrentNode(selectedNode);
         currentNode = selectedNode;
         oldNode = pila[pila.Count - 2];
         pila.RemoveAt(pila.Count - 1);

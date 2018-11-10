@@ -21,15 +21,11 @@ public class LookAt : MonoBehaviour {
 		GameObject player = GameObject.FindGameObjectWithTag(character);
 		GameObject charArm = GameObject.FindGameObjectWithTag(characterArm);
 		GameObject virtualCameraGO = GameObject.FindGameObjectWithTag("Virtual Camera 2");
-		Debug.Log(virtualCameraGO);	
 		if(virtualCameraGO){
 			CinemachineVirtualCamera virtualCamera = virtualCameraGO.GetComponent<CinemachineVirtualCamera>();
 			if(virtualCamera){
-				Debug.Log(virtualCamera);
 				virtualCamera.LookAt = charArm.transform;
 				virtualCamera.Follow = player.transform;
-				Debug.Log(virtualCamera.LookAt);
-				Debug.Log(virtualCamera.Follow);
 				// virtualCamera.DestroyCinemachineComponent<CinemachineTrackedDolly>();
 				// virtualCamera.AddCinemachineComponent<CinemachineTransposer>();
 				// var transposer = virtualCamera.GetCinemachineComponent<CinemachineTransposer>();

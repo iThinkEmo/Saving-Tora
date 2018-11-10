@@ -10,7 +10,6 @@ public class storeMenuBtn : MonoBehaviour, IPointerClickHandler {
 	private GameObject bs;
 
 	public void OnPointerClick(PointerEventData eventData) {
-		Debug.Log("Presionaron el boton " + label.text);
 		bs = GameObject.Find("Store Script");
 		BuyStuff info = bs.GetComponent<BuyStuff>();
 		info.stuff = label.text;

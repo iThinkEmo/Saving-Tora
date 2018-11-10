@@ -6,15 +6,15 @@ using System.Collections.Generic;
 //For documentation please refer to MagicForNonHumans.txt
 public class Magica
 {
-    public string[] magicType = { "Basic Magic", "Fire", "Blizzard", "Shock", "Natura" };
+    public string[] magicType = { "Basic ", "Fire", "Blizzard", "Shock", "Natura" };
     public string[] magicLevel = { "", "", "Big ", "Death ", "God " };
     public string[] descriptionA = { "It is almost like no magic", "It burns ", "It cools ", "It electrocutes ", "It calms " };
     public string[] descriptionB = { "...", "a little.", "a lot.", "so much that it might kill somebody.", "like a god." };
     public int[] magicStats = new int[] { 5, 20, 50, 70, 100 };
 
-    string magic;
-    int power;
-    string description;
+    public string magic = "Basic ";
+    public int power = 5;
+    public string description = "It is almost like no magic";
 
     //This constructor uses the arrays in this class to set the name and power of the selected magic
     public Magica(int mLevel, int mType)

@@ -13,23 +13,23 @@ public class LoadDiceScene : MonoBehaviour {
 		if (rules){
 			// Prende el timeline de las instrucciones
 			rules.transform.GetChild(22).gameObject.SetActive(true);
-			//rules.transform.GetChild(23).gameObject.SetActive(true);
+			// rules.transform.GetChild(23).gameObject.SetActive(true);
 		}
 		GameObject shopkeeper = GameObject.FindGameObjectWithTag("Shopkeeper");
 		if (shopkeeper){
 			shopkeeper.transform.GetChild(0).gameObject.SetActive(true);
 		}
 
-		gameManagerDelJuego.AddSelectUserCharacter("Ald", 1);
+		// gameManagerDelJuego.AddSelectUserCharacter("Ald", 1);
 		// gameManagerDelJuego.AddSelectUserCharacter("Mar", 2);
 		gameManagerDelJuego.AddSelectUserCharacter("Kar", 3);
 		gameManagerDelJuego.AddSelectUserCharacter("Irv", 4);
-		gameManagerDelJuego.numberOfPlayers = 3;
+		gameManagerDelJuego.numberOfPlayers = 2;
 		gameManagerDelJuego.WhoStarts();
-		Debug.Log(gameManagerDelJuego.numberOfPlayers);
-		Debug.Log(gameManagerDelJuego.orderedPlayers[0]);
-		Debug.Log(gameManagerDelJuego.orderedPlayers[1]);
-		Debug.Log(gameManagerDelJuego.orderedPlayers[2]);
+		// Debug.Log(gameManagerDelJuego.numberOfPlayers);
+		// Debug.Log(gameManagerDelJuego.orderedPlayers[0]);
+		// Debug.Log(gameManagerDelJuego.orderedPlayers[1]);
+		// Debug.Log(gameManagerDelJuego.orderedPlayers[2]);
 		// Debug.Log(gameManagerDelJuego.orderedPlayers[3]);
 
 		gameManagerDelJuego.instanciarPersonajes();

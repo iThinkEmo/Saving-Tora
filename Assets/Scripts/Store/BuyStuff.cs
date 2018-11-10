@@ -9,7 +9,6 @@ using UnityEngine.SceneManagement;
 
 
 public class BuyStuff : MonoBehaviour {
-	
 
 	public GameObject DialogText;
 	public GameObject WealthText;
@@ -55,21 +54,17 @@ public class BuyStuff : MonoBehaviour {
 		Menu.SetActive(false);
 
 		// sf = st.FightGetter();
+		
 		int currentPlayer = gameManagerDelJuego.GetCurrentPlayer();
 		currentPlayer = PlayerUber.normalizeCurrentPlayer(currentPlayer);
-		Debug.Log("currPLay: "+currentPlayer);
 		player = st.getPlayer(currentPlayer);
 		saviour = gameManagerDelJuego.GetCurrentSaviour();
-		Debug.Log(saviour);
-		Debug.Log(player.hp);
-		Debug.Log(saviour.hp);
 
 		WealthText.GetComponent<Text>().text = "wealth: " + player.money;
 		DialogText.GetComponent<Text>().text = "Hi, I'm <Insert name>. What do you want to buy?";
 
 		stuff = "";
 		nivel = player.lv;
-		Debug.Log("Nivel: "+nivel);
 		storeStuff = new Store(nivel);
 	}
 
@@ -134,6 +129,7 @@ public class BuyStuff : MonoBehaviour {
 	}
 
 	public void ShowInfo() {
+
 		switch (category) {
 			case "Magic":
 				index = storeStuff.GetMagiaIndex(stuff);
@@ -145,7 +141,6 @@ public class BuyStuff : MonoBehaviour {
 				break;
 			case "Item":
 				index = storeStuff.GetItemIndex(stuff);
-				Debug.Log("Entro a items");
 				if (index != -1) {
 					DialogText.GetComponent<Text>().text = storeStuff.itemDescription[index]+". It cost "+storeStuff.itemCosts[index]+"\nDo you want to buy it?";
 				} else {
@@ -221,11 +216,12 @@ public class BuyStuff : MonoBehaviour {
 		int currentPlayer = gameManagerDelJuego.GetCurrentPlayer();
 		currentPlayer = PlayerUber.normalizeCurrentPlayer(currentPlayer);
 		st.SetPlayer(currentPlayer, player);
+		
 		player = st.getPlayer(currentPlayer);
-		Debug.Log("savi: "+saviour);
+
 		SpawnInit.SetPlayerAttributes(player, saviour);
-		Debug.Log(player.money);
-		Debug.Log(saviour.money);
+
+
 		
 		gameManagerDelJuego.NombreNivelQueSeVaCargar = "QueSeCargueElJuego:v";
 		SceneManager.LoadScene("PantallaCargandoLoadingScreen");

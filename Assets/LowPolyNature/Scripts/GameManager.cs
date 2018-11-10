@@ -20,6 +20,12 @@ public class GameManager : Singleton<GameManager> {
 
     public bool firstLoadMainScene = true;
 
+    public bool[] firstTimeTutorial = new bool[4]{
+        true,
+        true,
+        true,
+        true
+    };
 
     // How many players are there
     public int numberOfPlayers = 2;
@@ -65,6 +71,10 @@ public class GameManager : Singleton<GameManager> {
     private List<string> NombresUltimoJugadorQueSeleccionoPersonaje = new List<string>(5);
     public int ComodinNombre = 2; //este comodin sirve para que no haya llave duplicadas si es que los usuairos se llaman igual..
 
+    
+    //bandera para evitar errores en el update de "ActualizadorTarjetasStats" para saber que stats mostrar en tarjeta
+    public bool BanderaYaSeDecidioCurrentPlayer { get; set; }
+
 
 
     public static int currentPlayer = 1, index = 1;
@@ -77,9 +87,7 @@ public class GameManager : Singleton<GameManager> {
         //Deberia recibir posiciones y rotaciones iniciales de los players men
         // Mandar posiciones y rotaciones de los personajes 
         // Consultar status maker para ver que recibe este método
-        //mk.setInitialScreenjson();
-
-      
+        //mk.setInitialScreenjson();      
     }
 
     //para obtener el numero de area basada en el node en el que esta
@@ -127,6 +135,7 @@ public class GameManager : Singleton<GameManager> {
 
     //Metodo que cambia el jugador
     public void nextPlayer() {
+        orderedPlayers = LeftShift(orderedPlayers);
         orderedPlayersID = LeftShift(orderedPlayersID);
         currentPlayer = orderedPlayersID[0];
     }
@@ -159,6 +168,7 @@ public class GameManager : Singleton<GameManager> {
 
     public PlayerUber PlayerUberSaviour(){
         PlayerUber player;
+        Debug.Log("currPlay: "+ currentPlayer);
         switch (currentPlayer){
             case 1:
                 player = witch;
@@ -179,6 +189,17 @@ public class GameManager : Singleton<GameManager> {
         return player;
     }
 
+    public PlayerUber GetPlayerUber() {
+        StatusMaker statusMaker = new StatusMaker();
+        PlayerUber player = statusMaker.getPlayer(PlayerUber.normalizeCurrentPlayer(currentPlayer));
+        
+        // foreach (KeyValuePair<int, ItemRPG> entry in player.items.myItems) {
+        //     Debug.Log("llave: "+entry.Key);
+		// 	Debug.Log("name: "+entry.Value.name);
+        // }
+        
+        return player;
+    }
 
     #region ***Métodos para manipulación y consulta de lista que tiene la información de seleccion personaje-usuario****
     //Descripción: Método de instancia útil para poder agregar
