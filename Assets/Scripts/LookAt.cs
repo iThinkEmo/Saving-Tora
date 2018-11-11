@@ -5,6 +5,8 @@ using Cinemachine;
 
 public class LookAt : MonoBehaviour {
 
+	private static GameManager gameManagerDelJuego  = GameManager.Instance;
+
 	// Use this for initialization
 	void Start () {
 		GameObject objectToLookAt = GameObject.FindGameObjectWithTag("Node");
@@ -36,6 +38,24 @@ public class LookAt : MonoBehaviour {
 				trackedDolly.m_Path = path;
 				CinemachineTrackedDolly.AutoDolly autoDolly = new CinemachineTrackedDolly.AutoDolly(true, -0.25f, 2, 5);
 				trackedDolly.m_AutoDolly = autoDolly;
+				
+				CoupleCameras(virtualCameraGO);
+			}
+		}
+	}
+
+	public static void CoupleCameras(GameObject vCam){
+		GameObject cleverCamera = GameObject.FindGameObjectWithTag("cleverCamera");
+		GameObject mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
+		if(cleverCamera && mainCamera){
+			cleverCamera.transform.position = vCam.transform.position;
+			cleverCamera.transform.rotation = vCam.transform.rotation;
+			GameObject fadingTimeline = GameObject.FindGameObjectWithTag("fadingTimeline");
+			if (fadingTimeline && !gameManagerDelJuego.changedScene){
+				fadingTimeline.transform.GetChild(1).gameObject.SetActive(true);
+			}
+			else if(gameManagerDelJuego.changedScene){
+				gameManagerDelJuego.changedScene = false;
 			}
 		}
 	}

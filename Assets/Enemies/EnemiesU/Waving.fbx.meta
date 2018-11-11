@@ -1,0 +1,211 @@
+fileFormatVersion: 2
+guid: 9a662bab0956acc44852202376d5edcd
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: char_enemy_robot01
+    100002: char_enemy_robot01_arm_left
+    100004: char_enemy_robot01_arm_right
+    100006: char_enemy_robot01_eye_left_lid
+    100008: char_enemy_robot01_eye_left_pupil
+    100010: char_enemy_robot01_eye_right_lid
+    100012: char_enemy_robot01_eye_right_pupil
+    100014: char_enemy_robot01_finger_left1
+    100016: char_enemy_robot01_finger_left2
+    100018: char_enemy_robot01_finger_left3
+    100020: char_enemy_robot01_finger_right1
+    100022: char_enemy_robot01_finger_right2
+    100024: char_enemy_robot01_finger_right3
+    100026: char_enemy_robot01_propeller
+    100028: char_enemy_robot01_tail
+    100030: char_enemy_robot01_wrist_left
+    100032: char_enemy_robot01_wrist_right
+    100034: mixamorig:Head
+    100036: mixamorig:HeadTop_End
+    100038: mixamorig:Hips
+    100040: mixamorig:LeftArm
+    100042: mixamorig:LeftFoot
+    100044: mixamorig:LeftForeArm
+    100046: mixamorig:LeftHand
+    100048: mixamorig:LeftLeg
+    100050: mixamorig:LeftShoulder
+    100052: mixamorig:LeftToe_End
+    100054: mixamorig:LeftToeBase
+    100056: mixamorig:LeftUpLeg
+    100058: mixamorig:Neck
+    100060: mixamorig:RightArm
+    100062: mixamorig:RightFoot
+    100064: mixamorig:RightForeArm
+    100066: mixamorig:RightHand
+    100068: mixamorig:RightLeg
+    100070: mixamorig:RightShoulder
+    100072: mixamorig:RightToe_End
+    100074: mixamorig:RightToeBase
+    100076: mixamorig:RightUpLeg
+    100078: mixamorig:Spine
+    100080: mixamorig:Spine1
+    100082: mixamorig:Spine2
+    100084: //RootNode
+    400000: char_enemy_robot01
+    400002: char_enemy_robot01_arm_left
+    400004: char_enemy_robot01_arm_right
+    400006: char_enemy_robot01_eye_left_lid
+    400008: char_enemy_robot01_eye_left_pupil
+    400010: char_enemy_robot01_eye_right_lid
+    400012: char_enemy_robot01_eye_right_pupil
+    400014: char_enemy_robot01_finger_left1
+    400016: char_enemy_robot01_finger_left2
+    400018: char_enemy_robot01_finger_left3
+    400020: char_enemy_robot01_finger_right1
+    400022: char_enemy_robot01_finger_right2
+    400024: char_enemy_robot01_finger_right3
+    400026: char_enemy_robot01_propeller
+    400028: char_enemy_robot01_tail
+    400030: char_enemy_robot01_wrist_left
+    400032: char_enemy_robot01_wrist_right
+    400034: mixamorig:Head
+    400036: mixamorig:HeadTop_End
+    400038: mixamorig:Hips
+    400040: mixamorig:LeftArm
+    400042: mixamorig:LeftFoot
+    400044: mixamorig:LeftForeArm
+    400046: mixamorig:LeftHand
+    400048: mixamorig:LeftLeg
+    400050: mixamorig:LeftShoulder
+    400052: mixamorig:LeftToe_End
+    400054: mixamorig:LeftToeBase
+    400056: mixamorig:LeftUpLeg
+    400058: mixamorig:Neck
+    400060: mixamorig:RightArm
+    400062: mixamorig:RightFoot
+    400064: mixamorig:RightForeArm
+    400066: mixamorig:RightHand
+    400068: mixamorig:RightLeg
+    400070: mixamorig:RightShoulder
+    400072: mixamorig:RightToe_End
+    400074: mixamorig:RightToeBase
+    400076: mixamorig:RightUpLeg
+    400078: mixamorig:Spine
+    400080: mixamorig:Spine1
+    400082: mixamorig:Spine2
+    400084: //RootNode
+    2100000: Material
+    4300000: char_enemy_robot01
+    4300002: char_enemy_robot01_arm_left
+    4300004: char_enemy_robot01_wrist_left
+    4300006: char_enemy_robot01_finger_left2
+    4300008: char_enemy_robot01_finger_left3
+    4300010: char_enemy_robot01_finger_left1
+    4300012: char_enemy_robot01_arm_right
+    4300014: char_enemy_robot01_wrist_right
+    4300016: char_enemy_robot01_finger_right2
+    4300018: char_enemy_robot01_finger_right1
+    4300020: char_enemy_robot01_finger_right3
+    4300022: char_enemy_robot01_eye_left_lid
+    4300024: char_enemy_robot01_eye_left_pupil
+    4300026: char_enemy_robot01_eye_right_lid
+    4300028: char_enemy_robot01_eye_right_pupil
+    4300030: char_enemy_robot01_propeller
+    4300032: char_enemy_robot01_tail
+    7400000: mixamo.com
+    9500000: //RootNode
+    13700000: char_enemy_robot01
+    13700002: char_enemy_robot01_arm_left
+    13700004: char_enemy_robot01_arm_right
+    13700006: char_enemy_robot01_eye_left_lid
+    13700008: char_enemy_robot01_eye_left_pupil
+    13700010: char_enemy_robot01_eye_right_lid
+    13700012: char_enemy_robot01_eye_right_pupil
+    13700014: char_enemy_robot01_finger_left1
+    13700016: char_enemy_robot01_finger_left2
+    13700018: char_enemy_robot01_finger_left3
+    13700020: char_enemy_robot01_finger_right1
+    13700022: char_enemy_robot01_finger_right2
+    13700024: char_enemy_robot01_finger_right3
+    13700026: char_enemy_robot01_propeller
+    13700028: char_enemy_robot01_tail
+    13700030: char_enemy_robot01_wrist_left
+    13700032: char_enemy_robot01_wrist_right
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 0.01
+    hasPreviousCalculatedGlobalScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

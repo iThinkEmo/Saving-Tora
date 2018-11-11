@@ -37,6 +37,7 @@ public class Dice : MonoBehaviour{
 
 	void TossDice() {
 		gameManagerDelJuego.BanderaYaSeDecidioCurrentPlayer = true;
+		gameManagerDelJuego.changedScene = true;
 
 		int currentPlayer = gameManagerDelJuego.GetCurrentPlayer();
 		string character = gameManagerDelJuego.idCharacter[currentPlayer];
@@ -56,7 +57,7 @@ public class Dice : MonoBehaviour{
 		anim.SetInteger("side", side);
 
 		// SelectNode.spacesLeft = side;
-		SelectNode.spacesLeft = 12;
+		SelectNode.spacesLeft = 2;
 
 		Vector3 force = Vector3.up * Random.Range(360.0f, 380.0f);
 		rb.AddForce(force);

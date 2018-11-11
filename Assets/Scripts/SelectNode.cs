@@ -115,6 +115,7 @@ public class SelectNode : MonoBehaviour {
     }
 
 	public void LoadSpecialEventProxy(){
+		// LookAt.CoupleCameras();
 		StartCoroutine(LoadSpecialEvent());
         //LoadFightScene();
 		//LoadEspecialEvent();
@@ -152,11 +153,11 @@ public class SelectNode : MonoBehaviour {
 
 					switch (typeOfSpace) {
 						case 0:
-							//StartCoroutine(LoadNextPlayer());
+							StartCoroutine(LoadNextPlayer());
 							
-							ResetPila(saviour);
-							ActivateCharacters(false);
-							LoadFightScene(saviour, player);
+							// ResetPila(saviour);
+							// ActivateCharacters(false);
+							// LoadFightScene(saviour, player);
 							break;
 						case 1:
 							ResetPila(saviour);
@@ -196,6 +197,7 @@ public class SelectNode : MonoBehaviour {
 
 		Dice.finishedBouncing = false;
 
+		gameManagerDelJuego.changedScene = true;
 		bool firstTimeTutorial = gameManagerDelJuego.firstTimeTutorial[gameManagerDelJuego.GetCurrentPlayer()-1];
 		if (firstTimeTutorial){
 			// Este jugador ya vio por primera vez el tutorial de la pelea
@@ -226,13 +228,11 @@ public class SelectNode : MonoBehaviour {
 		yield return null;
 
 		GameObject currentCharacter = GameObject.Find(character);
-		Debug.Log(character);
 		if (currentCharacter){
 			Saviour saviour = currentCharacter.GetComponent<Saviour>();
 			if (saviour) {
 				// int area = NodesMap.nodesArea["Node "+saviour.currentNode];
 				// Debug.Log(NodesMap.areaName[area]);
-				Debug.Log("Node "+saviour.currentNode);
 				GameObject node = GameObject.Find("Node "+saviour.currentNode);
 				if (node){
 					GameObject dice = GameObject.FindGameObjectWithTag("Dice");
@@ -251,8 +251,6 @@ public class SelectNode : MonoBehaviour {
 	public void MoveForwardCurrentPlayer(){
 		PlayerUber player = gameManagerDelJuego.GetPlayerUber();
 		Saviour saviour = gameManagerDelJuego.GetCurrentSaviour();
-		Debug.Log("Turns to skip :"+ player.turnsToSkip);
-		Debug.Log("CP: "+currentPlayer);
 		if (player.turnsToSkip == 0){
 			//se obtiene el jugador para saber cuál mover
 			currentPlayer = gameManagerDelJuego.GetCurrentPlayer();
@@ -299,7 +297,7 @@ public class SelectNode : MonoBehaviour {
 		gameManagerDelJuego.currentSaviour = saviour;
 
 		Dice.finishedBouncing = false;
-		
+		gameManagerDelJuego.changedScene = true;
         gameManagerDelJuego.NombreNivelQueSeVaCargar = "Store";
         SceneManager.LoadScene("PantallaCargandoLoadingScreen");
 	}
@@ -388,6 +386,10 @@ public class SelectNode : MonoBehaviour {
 		// Hacer el setup inicial para que no dé la condición de oldNode != currentNode
 	}
 
+	/// <summary>
+	/// Method to hide or spawn the characters when another scene is Loaded
+	/// such as Store or Fight.
+	/// </summary>  
 	public static void ActivateCharacters(bool show){
 		GameObject characters = GameObject.FindGameObjectWithTag("Characters");
 		if (characters){

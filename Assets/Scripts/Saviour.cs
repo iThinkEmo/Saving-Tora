@@ -280,8 +280,11 @@ public class Saviour : MonoBehaviour {
     public int currentNode, oldNode, selectedNode;
     public List<int> pila;
 
+    private GameManager gameManagerDelJuego;
+
 	// Use this for initialization
 	void Start() {
+        gameManagerDelJuego = GameManager.Instance;
         currentNode = 0;
         oldNode = 0;
         selectedNode = 0;
@@ -300,6 +303,12 @@ public class Saviour : MonoBehaviour {
 
         // Se mueve para adelanta
         if (selectedNode!=oldNode){
+            Saviour saviour = gameManagerDelJuego.currentSaviour;
+            if (saviour){
+                if (saviour.currentNode == selectedNode){
+                    Debug.Log("YESSSS");
+                }
+            }
             oldNode=currentNode;
             currentNode=selectedNode;
 			SelectNode.spacesLeft--;
@@ -328,7 +337,7 @@ public class Saviour : MonoBehaviour {
         switch(selectedNode){
             case 1: case 2: case 3: case 4: {
                 //agent.speed = 10;
-                agent.speed = 10;
+                agent.speed = 5;
                 break;
             }
             default: {

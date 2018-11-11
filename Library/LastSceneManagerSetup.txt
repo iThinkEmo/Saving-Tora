@@ -23,10 +23,10 @@ sceneSetups:
 - path: Assets/Scenes/Navigation Mesh.unity
   isLoaded: 0
   isActive: 0
-- path: Assets/Scenes/Main characters pro.unity
-  isLoaded: 0
-  isActive: 0
 - path: Assets/Scenes/Main Scene 1.unity
+  isLoaded: 1
+  isActive: 0
+- path: Assets/Scenes/Main characters pro.unity
   isLoaded: 0
   isActive: 0
 - path: Assets/Scenes/LoadMainScenes.unity

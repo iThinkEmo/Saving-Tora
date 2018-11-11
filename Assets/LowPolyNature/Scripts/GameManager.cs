@@ -75,7 +75,7 @@ public class GameManager : Singleton<GameManager> {
     //bandera para evitar errores en el update de "ActualizadorTarjetasStats" para saber que stats mostrar en tarjeta
     public bool BanderaYaSeDecidioCurrentPlayer { get; set; }
 
-
+    public bool changedScene = false;
 
     public static int currentPlayer = 1, index = 1;
     #endregion

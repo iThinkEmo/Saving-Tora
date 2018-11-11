@@ -48,6 +48,8 @@ TagManager:
   - useHospital
   - refuseHospital
   - stayTurn
+  - fadingTimeline
+  - cleverCamera
   layers:
   - Default
   - TransparentFX
