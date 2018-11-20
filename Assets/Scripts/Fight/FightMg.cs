@@ -143,6 +143,62 @@ class FightMg : MonoBehaviour {
     }
 
     //To be used with the button
+    public string[] AttackButton(int blue)
+    {
+        StatusMaker mk1 = new StatusMaker();
+        int i = Starter(mk1);
+        PlayerUber p1 = StarterP(i, mk1);
+        EnemyClass e1 = StarterE(i, mk1);
+        int plaier = PlayerUber.normalizeCurrentPlayer(gameManagerDelJuego.GetCurrentPlayer());
+        int[] p1DMG;
+        if (plaier == 2)
+        {
+            p1DMG = new int[] { -(e1.maxHp - e1.hp), 1 };
+        }
+        else
+        {
+            p1DMG = new int[] { 0, 0 };
+        }
+        int eStat = e1.AttackPower();
+        int[] e1DMG = e1.Attack(eStat);
+        string playerBlue = "";
+        //(1:Undead,2:Witch,3:Samurai,4:RiceMan)
+        int randomLines = UnityEngine.Random.Range(1, 5);
+        switch (randomLines)
+        {
+            case 1:
+                playerBlue = "Too slow!";
+                break;
+            case 2:
+                playerBlue = "You healed the monster...";
+                break;
+            case 3:
+                playerBlue = "Too fast!";
+                break;
+            case 4:
+                playerBlue = "Not enough Will!";
+                break;
+            default:
+                break;
+        }
+        string[] attres = new string[] { playerBlue, AttackResults(p1DMG, e1DMG)[1]};
+        int[] results = ResultsCalculator(p1DMG, e1DMG);
+        p1.RecalculateHealth(0, results[1]);
+        int maxPower = ((results[0] - (e1.dp)) > 0) ? (results[0] - (e1.dp)) : 4;
+        if (randomLines==2)
+        {
+            e1.RecalculateHealth(1, maxPower);
+        }
+        mk1.SetPlayer(i, p1);
+        mk1.SetMonster(i, e1);
+
+        //(user stat, user action, monster stat, monster action)
+        //STATMONSTER(1: defend,2:nothing,3:normal attack,4:critical attack,5: attack missed)
+        //StatUSER   (0 attack missed, 1 normal, 2 critical)
+        return new string[] { p1DMG[0].ToString(), attres[0], eStat.ToString(), attres[1], randomLines.ToString()};
+    }
+
+    //To be used with the button
     public string[] DFenceButton()
     {
         StatusMaker mk1 = new StatusMaker();
@@ -208,6 +264,43 @@ class FightMg : MonoBehaviour {
         //StatUSER   (0 attack missed, 4 normal, 5 critical)
         return new string[] { maginum.ToString(), attres[0], eStat.ToString(), attres[1] };
     }
+
+    //To be used with the button
+    public string[] MagicButton(int blue)
+    {
+        StatusMaker mk1 = new StatusMaker();
+        int i = Starter(mk1);
+        PlayerUber p1 = StarterP(i, mk1);
+        EnemyClass e1 = StarterE(i, mk1);
+        thisMagi = p1.magica.GetName();
+        int[] p1DMG = p1.AttackMagi();
+        p1DMG[1]    *= -1;
+        int eStat = e1.AttackPower();
+        int[] e1DMG = e1.Attack(eStat);
+        string[] attres = MagicResults(p1DMG, e1DMG, thisMagi);
+        int[] results = ResultsCalculator(p1DMG, e1DMG);
+
+        p1.RecalculateHealth(0, results[1]);
+        mk1.SetPlayer(i, p1);
+        int maginum = p1DMG[0];
+        switch (maginum)
+        {
+            case 1:
+                maginum = 4;
+                break;
+            case 2:
+                maginum = 5;
+                break;
+            default:
+                break;
+        }
+        maginum = 0;
+        //(user stat, user action, monster stat, monster action)
+        //STATMONSTER(1: defend,2:nothing,3:normal attack,4:critical attack,5: attack missed)
+        //StatUSER   (0 attack missed, 4 normal, 5 critical)
+        return new string[] { maginum.ToString(), attres[0], eStat.ToString(), attres[1] };
+    }
+
 
     //-1,-1 means failed flee
     public string[] Flee()
@@ -349,6 +442,10 @@ class FightMg : MonoBehaviour {
     //To get a string of what you did
     public string PlayerResulter(int[] player1,string magi)
     {
+        if (player1[1] <0)
+        {
+            return "Too Much Magic!";
+        }
         switch (player1[1])
         {
             case 0:
@@ -423,6 +520,15 @@ class FightMg : MonoBehaviour {
         GameManager gameManagerDelJuego = GameManager.Instance;
         gameManagerDelJuego.NombreNivelQueSeVaCargar = "QueSeCargueElJuego:v";
         SceneManager.LoadScene("PantallaCargandoLoadingScreen");
+    }
+
+    public void ChangeOnDutyStatus(bool status){
+        Saviour saviour = gameManagerDelJuego.GetCurrentSaviour();
+		PlayerUber player = gameManagerDelJuego.GetPlayerUber();
+		player.onDuty = status;
+		saviour.onDuty = status;
+		StatusMaker sm = new StatusMaker();
+		sm.SetPlayer(PlayerUber.normalizeCurrentPlayer(gameManagerDelJuego.GetCurrentPlayer()), player);
     }
 
 }

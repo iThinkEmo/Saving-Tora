@@ -16,7 +16,7 @@ public class SpawnCHANDE : MonoBehaviour {
     private GameManager gameManagerDelJuego;
 
     #region Characters
-
+    bool bossed = false;
     public GameObject witch;
     public GameObject riceMonk;
     public GameObject deady;
@@ -29,6 +29,7 @@ public class SpawnCHANDE : MonoBehaviour {
     public AudioSource sFXSource;
     [SerializeField] public Sprite[] pIcons;
     [SerializeField] public Sprite[] eIcons;
+    [SerializeField] public Sprite[] bIcons;
     public Image thisframe;
     public Image enemyFrame;
     public Image playerLife;
@@ -42,27 +43,38 @@ public class SpawnCHANDE : MonoBehaviour {
     string[] ultraTexter = {"",""};
     int ultraCounter = 0;
     int globalFun;
+    int globalUnFun;
     int globalSoundsFun;
     bool fightmode = false;
     bool finished = false;
     int maT;
+    StatusForFight sF;
     string usedItemName;
+    bool deathMoon = false;
+    int[] finalBosses = { 0, 1, 2 };
     #endregion
 
     #region Enemies
 
-    public GameObject tony;
-    public GameObject eyeM8;
-    public GameObject Silene;
+    //Overall Order should be: 
+    //(Eyes,LILRobots, Turrets, Crocs, LAMEBots)
+    //And in all clases they should be ordered by areas eg. (1,2,3,4)
+    //Finally the bosses are to be in order of ascending power.
+    //boss 0 is the weakest and the highest numbered boss is the strongest
+    public List<GameObject> EnemyMeshes;
+    public List<GameObject> Bosses;
 
     public EnemyClass enemyFight;
     public List<PlayableDirector> playableEnemies;
     public List<TimelineAsset> timelinesEnemies;
+    public GameObject theOneMonster;
     #endregion
 
     #region timeLine
     public List<PlayableDirector> playableDirectors;
     public List<TimelineAsset> timelines;
+    public PlayableDirector pMon;
+    public TimelineAsset tiMon;
     public GameObject theOneInstantiated;
     public GameObject theOneMagic;
     #endregion
@@ -73,6 +85,7 @@ public class SpawnCHANDE : MonoBehaviour {
     public GameObject area3;
     public GameObject area4;
     public GameObject factory;
+    public GameObject MainLight;
     #endregion
 
     #region Magi
@@ -83,33 +96,73 @@ public class SpawnCHANDE : MonoBehaviour {
     FightMg fightMg;
     private GameObject Menu;
 	public bool MenuBool=false;
+    int monsterAnimNum;
 
     // Use this for initialization
     void Start()
     {
+        // blueMoon = true;
+        // if (blueMoon)
+        // {
+        //     var lt = MainLight.GetComponent<Light>();
+        //     lt.color = Color.blue;
+        // }
         gameManagerDelJuego = GameManager.Instance;
-        PlayBMusic();
         StatusMaker mk1 = new StatusMaker();
-        StatusForFight sF = mk1.FightGetter();
+        sF = mk1.FightGetter();
         //for intializing scripts
         mk1.InitFight();
-        //int plaier = sF.currentPlayer;
         int plaier = PlayerUber.normalizeCurrentPlayer(gameManagerDelJuego.GetCurrentPlayer());
-
+        PlayBMusic();
+        Invoke("MonstersIdle", 1.18f);
         //Gets the player that summoned the fight
         playerStats = gameManagerDelJuego.GetPlayerUber();
         //Gets player enemy
         enemyFight = mk1.ToContinueJSONFight(plaier);
         //mk1.MakeAndPostJSONFight();
         //mk1.ToprepareTheContinuedFight(plaier);
+        if (enemyFight.hp<=0)
+        {
+            enemyFight.moNo = 0;
+        }
 
         ImagePlayer(plaier - 1);
 
         //ToSpawn player and to check if monster was previously spawned
+        //(0: Eye,1: LILRobots,2: Turrets,3: Crocs,4: LAMEBots)
         SpawnChar(plaier);
-
+        int spawnable;
+        if (enemyFight.moNo != 0)
+        {
+            if (enemyFight.moNo < 5)
+            {
+                Debug.Log(enemyFight.moNo);
+                spawnable =0;
+            }
+            else if (enemyFight.moNo < 9 && enemyFight.moNo >=5)
+            {
+                spawnable = 1;
+            }
+            else if (enemyFight.moNo < 13 && enemyFight.moNo >= 9)
+            {
+                spawnable =2;
+            }
+            else if (enemyFight.moNo < 17 && enemyFight.moNo >= 13)
+            {
+                spawnable = 3;
+            }
+            else
+            {
+                spawnable = 4;
+            }
+        }
+        else
+        {
+            spawnable = -1;
+        }
         //ToSpawn enemy and to check if monster was previously spawned
-        int u = SpawnEnemy(sF.area, sF.typeOfFight);
+        //(0: Eye,1: LILRobots,2: Turrets,3: Crocs,4: LAMEBots)
+        int u = SpawnEnemy(sF.area, sF.typeOfFight,spawnable);
         CheckIfContinued(plaier, u);
         selectArea(sF.area, sF.typeOfFight);
         //ForTheInitialJson();
@@ -122,6 +175,39 @@ public class SpawnCHANDE : MonoBehaviour {
         fightMg.player = this.playerStats;
     }
 
+    // Update is called once per frame
+    void Update()
+    {
+        //Gets the player that summoned the fight
+        if (!fightmode)
+        {
+            updaterE();
+            updaterP();
+        }
+
+        if (isDead() && !finished)
+        {
+            CancelInvoke();
+            DeadAnim();
+            ultraTexter[1] = "You fainted...";
+            ultraTexter[0] = "You fainted...";
+            Invoke("UltraTexting", 0.1F);
+            Invoke("FinishedAndDead", 2.5F);
+            finished = true;
+        }
+        if (isWin() && !finished)
+        {
+            CancelInvoke();
+            WinAnim();
+            ultraTexter[1] = "Monster fainted!";
+            ultraTexter[0] = "Monster fainted!";
+            Invoke("UltraTexting", 0.1F);
+            Invoke("FinishedAndWin", 3.5F);
+            finished = true;
+        }
+    }
+
+    #region calculators
 
     //Areas : 1,2,3,4
     //a  = Area         : To know which monster to spawn based on the area
@@ -154,64 +240,7 @@ public class SpawnCHANDE : MonoBehaviour {
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        //Gets the player that summoned the fight
-        if (!fightmode)
-        {
-            updaterE();
-            updaterP();
-        }
-
-        if (isDead() && !finished)
-        {
-            CancelInvoke();
-            //DeadAnim();
-            Invoke("FinishedAndDead", 0F);
-            finished = true;
-        }
-        if (isWin() && !finished)
-        {
-            CancelInvoke();
-            //WinAnim();
-            Invoke("FinishedAndWin", 0F);
-            finished = true;
-        }
-    }
-
-    public void WinAnim()
-    {
-        PlayableDirector director = playableDirectors[8];
-        IEnumerable<TrackAsset> tr = timelines[8].GetOutputTracks();
-        int cc = 0;
-        foreach (var item in tr)
-        {
-            if (cc == 1)
-            {
-                director.SetGenericBinding(item, theOneInstantiated);
-            }
-            cc++;
-        }
-        director.Play();
-    }
-
-    public void DeadAnim()
-    {
-        PlayableDirector director = playableDirectors[9];
-        IEnumerable<TrackAsset> tr = timelines[9].GetOutputTracks();
-        int cc = 0;
-        foreach (var item in tr)
-        {
-            if (cc == 1)
-            {
-                director.SetGenericBinding(item, theOneInstantiated);
-            }
-            cc++;
-        }
-        director.Play();
-    }
-
+    //to go to LV screen dead
     public void FinishedAndDead()
     {
         List<PlayerStatusGlobal> mySuperList = mk2.GetUltrajson();
@@ -225,12 +254,19 @@ public class SpawnCHANDE : MonoBehaviour {
         int fanses = -FansLoster();
         int moneys = -MoneyLoster();
         mk2.SetEnd(plaier, 0, fanses, moneys, 2, false);
+
+        enemyFight.hp = 0;
+        enemyFight.moNo = 0;
+        mk2.SetMonster(plaier, enemyFight);
+
         gameManagerDelJuego.NombreNivelQueSeVaCargar = "lvUP";
         SceneManager.LoadScene("PantallaCargandoLoadingScreen");
     }
 
+    //To go to LV screen Win
     public void FinishedAndWin()
     {
+        Debug.Log("fight: "+mk2.fStat.typeOfFight);
         List<PlayerStatusGlobal> mySuperList = mk2.GetUltrajson();
         //Gets the player that summoned the fight
         int i = mk2.FightGetter().currentPlayer - 1;
@@ -242,28 +278,52 @@ public class SpawnCHANDE : MonoBehaviour {
         int fanses = FansLoster();
         int moneys = MoneyLoster();
         mk2.SetEnd(plaier, ExpCalculator(), fanses, moneys, 0, true);
-        gameManagerDelJuego.NombreNivelQueSeVaCargar = "lvUP";
+
+		if (mk2.fStat.typeOfFight == 1) {
+			gameManagerDelJuego.wonBossFigth = true;
+			Saviour sv = gameManagerDelJuego.GetCurrentSaviour();
+			int node = sv.currentNode;
+			//se esta seteando al nodo correspondiente de la factory 
+			//el número de jugador que ganó
+			//versión Aldo
+			gameManagerDelJuego.bossWinners[node] = gameManagerDelJuego.GetCurrentPlayer();
+			Debug.Log("Winner: " + gameManagerDelJuego.bossWinners[node]);
+            int area = gameManagerDelJuego.GetCurrentPlayerArea();
+            gameManagerDelJuego.areaCleared[area] = true;
+
+            // Aquí hay que validar que si estamos en el área 4,
+            // deben ser tres fábricas las que hay por derrotar
+		}
+
+        fightMg.ChangeOnDutyStatus(status:false);
+
+		gameManagerDelJuego.NombreNivelQueSeVaCargar = "lvUP";
         SceneManager.LoadScene("PantallaCargandoLoadingScreen");
+		
     }
 
+    //To calculate money lost
     public int MoneyLoster()
     {
         int one = Convert.ToInt32(Math.Round(playerStats.fans * 0.25));
         return one;
     }
 
+    //Toggle calculate EXp
     public int ExpCalculator()
     {
         int one = Convert.ToInt32(Math.Round(playerStats.maxExp * 0.32));
         return one;
     }
 
+    //To calculate Fans
     public int FansLoster()
     {
         int one = Convert.ToInt32(Math.Round(playerStats.fans * 0.30));
         return one;
     }
 
+    //To update the player
     public void updaterP()
     {
         int mo = mk2.FightGetter().currentPlayer;
@@ -272,6 +332,7 @@ public class SpawnCHANDE : MonoBehaviour {
         UpdateHealthBar(playerStats, enemyFight);
     }
 
+    //To update the Enemy
     public void updaterE()
     {
         int mo = mk2.FightGetter().currentPlayer;
@@ -280,8 +341,13 @@ public class SpawnCHANDE : MonoBehaviour {
         UpdateHealthBarE(playerStats, enemyFight);
     }
 
-	public void itemSelected() {
-		Debug.Log("Item Selected");
+    #endregion
+
+    #region Items
+
+    public void itemSelected()
+    {
+        Debug.Log("Item Selected");
         TextArea.SetActive(true);
         ItemAnim();
         arr = fightMg.ITEMER();
@@ -294,9 +360,17 @@ public class SpawnCHANDE : MonoBehaviour {
         maT = Int32.Parse(arr[0]);
         Invoke("EnemyAnimater", 2.5F);
         Invoke("UltraTexting", 2.6F);
-        Invoke("ToBeContinued", 7F);
-        Invoke("healther", 1.9F);
-        HPTimeCaller(globalFun,2.5F);
+        Invoke("healther",3.5F);
+        HPTimeCaller(globalFun, 3.6F);
+        //if(true)
+        if (sF.typeOfFight == 1)
+        {
+            Invoke("ToContinue", 7F);
+        }
+        else
+        {
+            Invoke("ToBeContinued", 7F);
+        }
     }
 
     public void itemNamer()
@@ -323,25 +397,11 @@ public class SpawnCHANDE : MonoBehaviour {
        // Debug.Log("NEW HP in Spwan" + playerStats.hp);
     }
 
-    public void ItemAnim()
-    {
-        PlayableDirector director = playableDirectors[10];
-        IEnumerable<TrackAsset> tr = timelines[10].GetOutputTracks();
-        int cc = 0;
-        foreach (var item in tr)
-        {
-            if (cc == 1)
-            {
-                director.SetGenericBinding(item, theOneInstantiated);
-            }
-            cc++;
-        }
-        director.Play();
-    }
-
+    #endregion
 
     #region trueThings
 
+    //to put player icon on its place
     public void ImagePlayer(int numplayer)
     {
         thisframe.sprite = pIcons[numplayer];
@@ -359,6 +419,7 @@ public class SpawnCHANDE : MonoBehaviour {
         }
     }
 
+    //Todetermiune dead
     public bool isDead()
     {
         if (playerLife.fillAmount <= 0.0F)
@@ -368,6 +429,7 @@ public class SpawnCHANDE : MonoBehaviour {
         return false;
     }
 
+    //to determine win
     public bool isWin()
     {
         if (enemyLife.fillAmount <= 0.0F)
@@ -401,46 +463,126 @@ public class SpawnCHANDE : MonoBehaviour {
 
     //Areas : 1,2,3,4
     //a  = Area         : To know which monster to spawn based on the area
-    //tOF= Type of Fight: 0:Normal, 1:BOSS, 2:ULTRABOSS
-    private int SpawnEnemy(int areaM8, int typeOfFight)
+    //(0: Eye,1: LILRobots,2: Turrets,3: Crocs,4: LAMEBots)
+    //tOF= Type of Fight: 0:Normal, 1:BOSS
+    private int SpawnEnemy(int areaM8, int typeOfFight, int spawns)
     {
+        int tocomply = 0;
         int toReturn = 0;
-        int trueRand = UnityEngine.Random.Range(1, 3);
+        int trueRand = spawns != -1 ? spawns : UnityEngine.Random.Range(0, 5);
         Debug.Log("TrueRand: " + trueRand);
+
         if (typeOfFight == 0)
         {
-            switch (areaM8)
+            tocomply = areaM8 - 1;
+            switch (trueRand)
             {
-                default:
-                    switch (trueRand)
-                    {
-                        case 1:
-                            Instantiate(tony, new Vector3(72.96f, -6.4f, 37f), Quaternion.Euler(0.0f, -100.0f, 0.0f));
-                            toReturn = trueRand;
-                            enemyFrame.sprite = eIcons[0];
-                            break;
-                        case 2:
-                            Instantiate(eyeM8, new Vector3(72.96f, -6.4f, 37f), Quaternion.Euler(0.0f, -50.0f, 0.0f));
-                            toReturn = trueRand;
-                            enemyFrame.sprite = eIcons[1];
-                            break;
-                        default:
-                            break;
-                    }
+                case 0:
+                    //Eyes
+                    theOneMonster = Instantiate(EnemyMeshes[0 + tocomply], new Vector3(72.96f, -6.4f, 37f), Quaternion.Euler(0.0f, -50.0f, 0.0f));
+                    if (areaM8==1)
+                    { theOneMonster.transform.localScale = new Vector3(78F, 78F, 78F);}
+                    toReturn = 0 + tocomply + 1;
+                    enemyFrame.sprite = eIcons[0 + tocomply];
                     break;
-                    //default:
-                    //    break;
+                case 1:
+                    //LilBots
+                    theOneMonster = Instantiate(EnemyMeshes[4 + tocomply], new Vector3(72.96f, -6.4f, 37f), Quaternion.Euler(0.0f, -100.0f, 0.0f));
+                    toReturn = 4 + tocomply + 1;
+                    enemyFrame.sprite = eIcons[4 + tocomply];
+                    break;
+                case 2:
+                    //Turrets
+                    theOneMonster = Instantiate(EnemyMeshes[8 + tocomply], new Vector3(71.43f, -5.68f, 36.38f), Quaternion.Euler(0.0f, 0f, -90f));
+                    theOneMonster.transform.localScale = new Vector3(0.5902917F, 0.5902917F, 0.5902917F);
+                    toReturn = 8 + tocomply + 1;
+                    enemyFrame.sprite = eIcons[8 + tocomply];
+                    break;
+                case 3:
+                    //Crocs
+                    theOneMonster = Instantiate(EnemyMeshes[12 + tocomply], new Vector3(72.96f, -6.4f, 37f), Quaternion.Euler(0.0f, -100.0f, 0.0f));
+                    toReturn = 12 + tocomply +1;
+                    enemyFrame.sprite = eIcons[12 + tocomply];
+                    break;
+                case 4:
+                    //LAMEBots
+                    theOneMonster = Instantiate(EnemyMeshes[16 + tocomply], new Vector3(72.93f, -5.76f, 37f), Quaternion.Euler(0.0f, -133.313f, 0.0f));
+                    //theOneMonster = Instantiate(EnemyMeshes[16 + tocomply], new Vector3(0, -0, 0), Quaternion.Euler(0.0f, -0, 0.0f));
+                    toReturn = 16 + tocomply + 1;
+                    enemyFrame.sprite = eIcons[16 + tocomply];
+                    break;
+                default:
+                    break;
             }
+            monsterAnimNum = trueRand;
         }
         else if (typeOfFight == 1)
         {
-        }
-        else
-        {
+            tocomply = areaM8 - 1;
+            //Bosses: (0:Natalia,1:BIGLAM,2:Silene,3:meKPurple,4:redMeK,5:ULTIMATEROBOT)
+            switch (tocomply)
+            {
+                //NATALIA
+                case 0:
+                    theOneMonster = Instantiate(Bosses[0], new Vector3(72.96f, -6.4f, 37f), Quaternion.Euler(0.0f, -50.0f, 0.0f));
+                    toReturn = 21;
+                    enemyFrame.sprite = bIcons[0];
+                    monsterAnimNum = 5;
+                    break;
+                //BIGLAM
+                case 1:
+                    theOneMonster = Instantiate(Bosses[1], new Vector3(72.02f, -3.9f, 36.6f), Quaternion.Euler(0.0f, 246.653f, 0.0f));
+                    theOneMonster.transform.localScale = new Vector3(11.24931F, 11.24931F, 11.24931F);
+                    toReturn = 22;
+                    enemyFrame.sprite = bIcons[1];
+                    monsterAnimNum = 6;
+                    break;
+                //Silene
+                case 2:
+                    theOneMonster = Instantiate(Bosses[2], new Vector3(72.78f, -5.63f, 37f), Quaternion.Euler(-3.5f, -182.632f, 11.339f));
+                    theOneMonster.transform.localScale = new Vector3(22.5387F, 22.5387F, -22.5387F);
+                    toReturn = 23;
+                    enemyFrame.sprite = bIcons[2];
+                    monsterAnimNum = 7;
+                    break;
+                case 3:
+                    if (finalBosses[0] != 0)
+                    {
+                        //meKPurple
+                        theOneMonster = Instantiate(Bosses[3], new Vector3(72.96f, -6.4f, 37f), Quaternion.Euler(0.0f, -100.0f, 0.0f));
+                        toReturn = 24;
+                        enemyFrame.sprite = bIcons[3];
+                        monsterAnimNum = 8;
+                       // finalBosses[0] = 0;
+                    }
+                    else if (finalBosses[1] == 0)
+                    {
+                        //redMeK
+                        theOneMonster = Instantiate(Bosses[4], new Vector3(72.96f, -6.43f, 37f), Quaternion.Euler(0.0f, -135.504f, 0.0f));
+                        theOneMonster.transform.localScale = new Vector3(2.359379F, 2.359379F, 2.359379F);
+                        toReturn = 25;
+                        enemyFrame.sprite = bIcons[4];
+                       // finalBosses[1] = 0;
+                        monsterAnimNum = 9;
+                    }
+                    else
+                    {
+                        //ULTIMATEROBOT
+                        theOneMonster = Instantiate(Bosses[5], new Vector3(73.909f, -6.45f, 37.324f), Quaternion.Euler(0.0f, -77.777f, 0.0f));
+                        theOneMonster.transform.localScale = new Vector3(2.0282F, 2.0282F, 2.0282F);
+                        toReturn = 26;
+                        enemyFrame.sprite = bIcons[5];
+                        monsterAnimNum = 10;
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
         return toReturn;
     }
 
+    //To fill up the jsons to be read
     public void ForTheInitialJson()
     {
         var filenamec = "undead.json";
@@ -451,7 +593,6 @@ public class SpawnCHANDE : MonoBehaviour {
         var path3 = Application.persistentDataPath + "/" + filename3;
         var filename4 = "rice.json";
         var path4 = Application.persistentDataPath + "/" + filename4;
-
 
         PlayerUber myP1 = new PlayerUber(1);
         PlayerUber myP2 = new PlayerUber(2);
@@ -473,16 +614,19 @@ public class SpawnCHANDE : MonoBehaviour {
         //jsonString = JsonConvert.SerializeObject(newPlayer, Formatting.Indented);
     }
 
+    //See method below
     public void UpdateHealthBar(PlayerUber p1, EnemyClass p2)
     {
         UpdateHPUser(p1);
     }
 
+    //See method below
     public void UpdateHealthBarE(PlayerUber p1, EnemyClass p2)
     {
         UpdateHPEnemy(p2);
     }
 
+    //To update user health bar
     public void UpdateHPUser(PlayerUber p1)
     {
         GameObject dialogText = GameObject.FindGameObjectWithTag("hpMeFight");
@@ -497,6 +641,7 @@ public class SpawnCHANDE : MonoBehaviour {
         playerLife.fillAmount = p1.HPPercentage();
     }
 
+    //To update enemy healthbar
     public void UpdateHPEnemy(EnemyClass p1)
     {
         GameObject dialogText = GameObject.FindGameObjectWithTag("hpEnemyFight");
@@ -524,27 +669,42 @@ public class SpawnCHANDE : MonoBehaviour {
         SceneManager.LoadScene("PantallaCargandoLoadingScreen");
     }
 
+    //To play background music
     void PlayBMusic()
     {
-        //Should be a clip ere m8
-        //int randClip = UnityEngine.Random.Range(0, stings.Length);
-        BSource.clip = BackMusic[0];
-        BSource.Play();
-        //Invoke("PlayLoopR", BSource.clip.length);
+        if (sF.typeOfFight == 0)
+        {
+            BSource.clip = BackMusic[0];
+            BSource.Play();
+        }
+        else
+        {
+            BSource.clip = BackMusic[1];
+            BSource.Play();
+        }
 
     }
 
+    //To playbossloop
     public void PlayLoopR()
     {
-        BSource.clip = BackMusic[1];
+        BSource.clip = BackMusic[3];
         BSource.Play();
+    }
+
+    //To playbosstheme
+    public void PlayTheme()
+    {
+        BSource.clip = BackMusic[2];
+        BSource.Play();
+        Invoke("PlayLoopR",BSource.clip.length);
     }
 
     #endregion
 
-
     #region Buttons
 
+    //To open the items menu
     public void ItemsB()
     {
         Menu.SetActive(true);
@@ -553,30 +713,63 @@ public class SpawnCHANDE : MonoBehaviour {
         TextArea.SetActive(false);
     }
 
+    //To Invoque the attack sequence via the button
     public void AttackB()
     {
         fightmode = true;
         float trueVV = 0;
-        arr = fightMg.AttackButton();
+
+        if (gameManagerDelJuego.deadMoonPhase){
+            arr = fightMg.AttackButton(1);
+            BlueAttack(Int32.Parse(arr[4]));
+        }
+        else
+        {
+            arr = fightMg.AttackButton();
+            Invoke("soundFXPlayer", 1F);
+            AttackAnim();
+        }
         ultraTexter[0] = arr[1];
-        //ultraTexter[0] = "You Missed";
         ultraTexter[1] = arr[3];
-        Invoke("UltraTexting",0.1F);
-        globalFun = Int32.Parse(arr[2]);
         HitChooser(ultraTexter[0]);
-        Invoke("soundFXPlayer", 1F);
-        AttackAnim();
+        Invoke("UltraTexting", 0.1F);
+        globalFun = Int32.Parse(arr[2]);
 
         if (globalFun != 1)
         {
-            Invoke("soundFXPlayer", 2.5F);
-            Invoke("updaterE", 2.6F);
-            Invoke("HitHit", 2.5F);
-            float enemyTime = 5F;
+            //Invoke("soundFXPlayer", 2.5F);
+            Invoke("updaterE", 2.8F);
+            //StatUSER   (0: missed,1: normalATK,2:criticalATK,3:defence ,4: normal magi,5:critical magi ,6:  failed flee, 7: flee)
+            if (globalSoundsFun == 7)
+            {
+                Invoke("HitHit", 2.5F);
+            }
+            else if (globalSoundsFun == 8)
+            {
+                Invoke("HitCritical", 2.5F);
+            }
+            else
+            {
+                Invoke("HitMiss", 2.5F);
+            }
+            float enemyTime = 4F;
             Invoke("EnemyAnimater", enemyTime);
             Invoke("UltraTexting", enemyTime + 0.1F);
-            HPTimeCaller(globalFun, enemyTime);
-            trueVV = enemyTime;
+            //STATMONSTER(1: defend,2:nothing,3:normal attack,4:critical attack,5: attack missed, 6:ded)
+            if (globalFun == 3)
+            {
+                Invoke("EnemyHit", enemyTime +2.5F);
+            }
+            else if (globalFun == 4)
+            {
+                Invoke("EnemyCritical", enemyTime + 2.5F);
+            }
+            else
+            {
+                Invoke("EnemyMiss", enemyTime + 2.5F);
+            }
+            HPTimeCaller(globalFun, enemyTime+.6f);
+            trueVV = enemyTime +4;
         }
         else
         {
@@ -586,36 +779,61 @@ public class SpawnCHANDE : MonoBehaviour {
             Invoke("EnemyAnimater", enemyTime);
             Invoke("UltraTexting", enemyTime + 0.1F);
             HPTimeCaller(globalFun, enemyTime);
-            trueVV = enemyTime;
+            trueVV = enemyTime+2.5f;
         }
-        Invoke("ToBeContinued", trueVV + 2.5F);
+        //if(true)
+        if (sF.typeOfFight==1)
+        {
+            Invoke("ToContinue", trueVV);
+        }
+        else
+        {
+            Invoke("ToBeContinued", trueVV);
+        }
     }
 
+    //To Invoque the defence sequence via the button
     public void DefenceB()
     {
         fightmode = true;
         arr = fightMg.DFenceButton();
-        ultraTexter[0] = arr[1];
-        ultraTexter[1] = arr[3];
+        ultraTexter[0] = arr[3];
+        ultraTexter[1] = arr[1];
         Invoke("UltraTexting", 0.1F);
         globalFun = Int32.Parse(arr[2]);
-        DefendAnimation();
+        EnemyAnimater();
+        HPTimeCaller(globalFun, 0.6f);
 
-        Invoke("EnemyAnimater", 2.5F);
+        Invoke("DefendAnimation", 2.5F);
         Invoke("UltraTexting", 2.6F);
 
-        Invoke("ToBeContinued", 5F);
-
+        if (sF.typeOfFight == 1)
+        {
+            Invoke("ToContinue", 5f);
+        }
+        else
+        {
+            Invoke("ToBeContinued", 5f);
+        }
     }
 
+    //To Invoque the magi sequence via the button
     public void MagiB()
     {
         fightmode = true;
         float trueVV = 0;
         Invoke("magiSound", 0.5F);
-        MagiChooser();
-        arr = fightMg.MagicButton();
-        ultraTexter[0] = arr[1];
+        if (gameManagerDelJuego.deadMoonPhase)
+        {
+            BlueMagic();
+            arr = fightMg.MagicButton(1);
+        }
+        else
+        {
+            MagiChooser();
+            arr = fightMg.MagicButton();
+        }
+        ultraTexter[0] = gameManagerDelJuego.deadMoonPhase == true ? "Too much magic!" : arr[1];
         ultraTexter[1] = arr[3];
         Invoke("UltraTexting", 0.1F);
         globalFun = Int32.Parse(arr[2]);
@@ -625,12 +843,28 @@ public class SpawnCHANDE : MonoBehaviour {
         {
             Invoke("soundFXPlayer", 2F);
             Invoke("updaterE", 2.1F);
-            Invoke("MagicHit", 2F);
+            if (!gameManagerDelJuego.deadMoonPhase)
+            {
+                Invoke("MagicHit", 2F);
+            }
             float enemyTime = 4.5F;
             Invoke("EnemyAnimater", enemyTime);
             Invoke("UltraTexting", enemyTime + 0.1F);
-            HPTimeCaller(globalFun, enemyTime);
-            trueVV = enemyTime;
+            //STATMONSTER(1: defend,2:nothing,3:normal attack,4:critical attack,5: attack missed, 6:ded)
+            if (globalFun == 3)
+            {
+                Invoke("EnemyHit", enemyTime + 2.5F);
+            }
+            else if (globalFun == 4)
+            {
+                Invoke("EnemyCritical", enemyTime + 2.5F);
+            }
+            else
+            {
+                Invoke("EnemyMiss", enemyTime + 2.5F);
+            }
+            HPTimeCaller(globalFun, enemyTime + .8f);
+            trueVV = enemyTime + 4;
         }
         else
         {
@@ -640,15 +874,23 @@ public class SpawnCHANDE : MonoBehaviour {
             float enemyTime = 2F;
             Invoke("UltraTexting", enemyTime+0.1F);
             HPTimeCaller(globalFun, enemyTime);
-            trueVV = enemyTime;
+            trueVV = enemyTime + 2.5f;
         }
-
-        Invoke("ToBeContinued", trueVV + 2.5F);
-
+        //if(true)
+        if (sF.typeOfFight == 1)
+        {
+            Invoke("ToContinue", trueVV);
+        }
+        else
+        {
+            Invoke("ToBeContinued", trueVV);
+        }
     }
 
-    public void ToBeContinued()
-    {
+    //To activate the: "To be continued" Sequence 
+    public void ToBeContinued(){
+        fightMg.ChangeOnDutyStatus(status:true);
+
         ultraTexter[0] = "Time is up!";
         UltraTexting();
         PlayableDirector director = playableDirectors[9];
@@ -666,8 +908,22 @@ public class SpawnCHANDE : MonoBehaviour {
         Invoke("ReturnToMain", 2F);
     }
 
-
-
+    //To activate the: "continued" Sequence 
+    public void ToContinue()
+    {
+        if (!bossed)
+        {
+            PlayTheme();
+            bossed = true;
+        }
+        ultraTexter[0] = "NO ESCAPE!\nWIN OR LOSE.";
+        ultraTexter[1] = "NO ESCAPE!\nWIN OR LOSE.";
+        UltraTexting();
+        UltraTexting();
+        PlayableDirector director = playableDirectors[16];
+        IEnumerable<TrackAsset> tr = timelines[16].GetOutputTracks();
+        director.Play();
+    }
 
     //STATMONSTER(1: defend,2:nothing,3:normal attack,4:critical attack,5: attack missed, 6:ded)
     //To calculate time for health recalculation based on action 
@@ -698,19 +954,21 @@ public class SpawnCHANDE : MonoBehaviour {
         }
     }
 
-
+    //To play various sounds
     public void soundFXPlayer()
     {
         sFXSource.clip = sFX[globalSoundsFun];
         sFXSource.Play();
     }
 
+    //To play magi summon sound
     public void magiSound()
     {
         sFXSource.clip = sFX[5];
         sFXSource.Play();
     }
 
+    //To activate que button is pressed
     public void FleeB()
     {
         fightmode = true;
@@ -719,31 +977,93 @@ public class SpawnCHANDE : MonoBehaviour {
         ultraTexter[1] = arr[3];
         Invoke("UltraTexting", 0.1F);
         globalFun = Int32.Parse(arr[2]);
-        if (Int32.Parse(arr[0]) == 6)
+        if (sF.typeOfFight == 1)
         {
+            if (!bossed)
+            {
+                PlayTheme();
+                bossed = true;
+            }
+            ultraTexter[0] = "There's no escape from a BOSS!";
             FailAnimation();
             Invoke("EnemyAnimater", 2.5F);
             Invoke("UltraTexting", 2.6F);
-            Invoke("ToBeContinued", 5F);
+            //STATMONSTER(1: defend,2:nothing,3:normal attack,4:critical attack,5: attack missed, 6:ded)
+            float eT = 0f;
+            if (globalFun == 3)
+            {
+                eT = 5f;
+                Invoke("EnemyHit", eT);
+            }
+            else if (globalFun == 4)
+            {
+                eT = 5f;
+                Invoke("EnemyCritical", eT);
+            }
+            else if(globalFun == 5|| globalFun == 2)
+            {
+                eT = 5f;
+                Invoke("EnemyMiss", eT);
+            }
+            if (eT>0.0f)
+            {
+                HPTimeCaller(globalFun, eT-2 + 0.4f);
+                eT = 1.5f;
+            }
+            Invoke("ToContinue", eT+5f);
         }
         else
         {
-            fleeAnimation();
-            //Return to world map
-            int plaier = PlayerUber.normalizeCurrentPlayer(gameManagerDelJuego.GetCurrentPlayer());
-            mk2.SetEnd(plaier, 0, 0, 0, 0, true);
-            Invoke("FleeReturner", 6);
+            if (Int32.Parse(arr[0]) == 6)
+            {
+                FailAnimation();
+                Invoke("EnemyAnimater", 2.5F);
+                Invoke("UltraTexting", 2.6F);
+                //STATMONSTER(1: defend,2:nothing,3:normal attack,4:critical attack,5: attack missed, 6:ded)
+                float eT = 0f;
+                if (globalFun == 3)
+                {
+                    eT = 5f;
+                    Invoke("EnemyHit", eT);
+                }
+                else if (globalFun == 4)
+                {
+                    eT = 5f;
+                    Invoke("EnemyCritical", eT);
+                }
+                else if (globalFun == 5)
+                {
+                    eT = 5f;
+                    Invoke("EnemyMiss", eT);
+                }
+                if (eT > 0.0f)
+                {
+                    HPTimeCaller(globalFun, eT-2 + 0.4f);
+                    eT = 1.5f;
+                }
+                Invoke("ToContinue", eT + 5f);
+            }
+            else
+            {
+                fleeAnimation();
+                enemyFight.hp = 0;
+                enemyFight.moNo = 0;
+                int plaier = PlayerUber.normalizeCurrentPlayer(gameManagerDelJuego.GetCurrentPlayer());
+                mk2.SetMonster(plaier, enemyFight);
+                //Return to world map
+                mk2.SetEnd(plaier, 0, 0, 0, 0, true);
+                Invoke("FleeReturner", 6);
+            }
         }
-
-
     }
 
+    //To return to main without going into the XP area
     public void FleeReturner()
     {
         ReturnToMain();
     }
 
-
+    //To quit the menu
     public void quitItemsMenu()
     {
         fightMg.quitMenu();
@@ -753,8 +1073,73 @@ public class SpawnCHANDE : MonoBehaviour {
 
     #endregion
 
-
     #region Timeline
+
+    public void WinAnim()
+    {
+        PlayableDirector director = playableDirectors[8];
+        IEnumerable<TrackAsset> tr = timelines[8].GetOutputTracks();
+        int cc = 0;
+        foreach (var item in tr)
+        {
+            if (cc == 1)
+            {
+                director.SetGenericBinding(item, theOneInstantiated);
+            }
+            cc++;
+        }
+        director.Play();
+    }
+
+    //Toget the monsters Idleanim
+    public void MonstersIdle()
+    {
+        PlayableDirector director = pMon;
+        IEnumerable<TrackAsset> tr = tiMon.GetOutputTracks();
+        int cc = 0;
+        foreach (var item in tr)
+        {
+            if (cc == monsterAnimNum)
+            {
+                director.SetGenericBinding(item, theOneMonster);
+            }
+            cc++;
+        }
+        director.Play();
+    }
+
+    public void DeadAnim()
+    {
+        PlayableDirector director = playableEnemies[4];
+        IEnumerable<TrackAsset> tr = timelinesEnemies[4].GetOutputTracks();
+        int cc = 0;
+        foreach (var item in tr)
+        {
+            if (cc == 1)
+            {
+                director.SetGenericBinding(item, theOneInstantiated);
+            }
+            cc++;
+        }
+        director.Play();
+    }
+
+    //To animate itemtaking
+    public void ItemAnim()
+    {
+        PlayableDirector director = playableDirectors[10];
+        IEnumerable<TrackAsset> tr = timelines[10].GetOutputTracks();
+        int cc = 0;
+        foreach (var item in tr)
+        {
+            if (cc == 1)
+            {
+                director.SetGenericBinding(item, theOneInstantiated);
+            }
+            cc++;
+        }
+        director.Play();
+    }
 
     //To control text of fight
     public void UltraTexting()
@@ -781,6 +1166,49 @@ public class SpawnCHANDE : MonoBehaviour {
         director.Play();
     }
 
+    //Enemy hits you 
+    public void EnemyHit()
+    {
+        PlayableDirector director = playableDirectors[13];
+        IEnumerable<TrackAsset> tr = timelines[13].GetOutputTracks();
+        int cc = 0;
+        foreach (var item in tr)
+        {
+            if (cc == 1)
+            {
+                director.SetGenericBinding(item, theOneInstantiated);
+            }
+            cc++;
+        }
+        director.Play();
+    }
+
+    //Enemy smashes you
+    public void EnemyCritical()
+    {
+        PlayableDirector director = playableDirectors[14];
+        IEnumerable<TrackAsset> tr = timelines[14].GetOutputTracks();
+        int cc = 0;
+        foreach (var item in tr)
+        {
+            if (cc == 1)
+            {
+                director.SetGenericBinding(item, theOneInstantiated);
+            }
+            cc++;
+        }
+        director.Play();
+    }
+
+    //Enemy misses attack
+    public void EnemyMiss()
+    {
+        PlayableDirector director = playableDirectors[15];
+        IEnumerable<TrackAsset> tr = timelines[15].GetOutputTracks();
+        director.Play();
+    }
+
+    //Animation for when magic power gets countered by a defence
     public void MagicDef()
     {
         PlayableDirector director = playableDirectors[6];
@@ -797,6 +1225,7 @@ public class SpawnCHANDE : MonoBehaviour {
         director.Play();
     }
 
+    //Animation for when magic power hits
     public void MagicHit()
     {
         PlayableDirector director = playableDirectors[5];
@@ -814,20 +1243,45 @@ public class SpawnCHANDE : MonoBehaviour {
     }
 
 
-    //Enemies anismssss
+    //EnemieWasHit
     public void HitHit()
     {
         PlayableDirector director = playableDirectors[7];
         IEnumerable<TrackAsset> tr = timelines[7].GetOutputTracks();
-        //int cc = 0;
-        //foreach (var item in tr)
-        //{
-        //    if (cc == 3)
-        //    {
-        //        director.SetGenericBinding(item, theOneMagic);
-        //    }
-        //    cc++;
-        //}
+        int cc = 0;
+        foreach (var item in tr)
+        {
+            if (cc == 1)
+            {
+                director.SetGenericBinding(item, theOneMonster);
+            }
+            cc++;
+        }
+        director.Play();
+    }
+
+    //EnemieWasHit
+    public void HitMiss()
+    {
+        PlayableDirector director = playableDirectors[12];
+        IEnumerable<TrackAsset> tr = timelines[12].GetOutputTracks();
+        director.Play();
+    }
+
+    //EnemyWasCriticalHit
+    public void HitCritical()
+    {
+        PlayableDirector director = playableDirectors[11];
+        IEnumerable<TrackAsset> tr = timelines[11].GetOutputTracks();
+        int cc = 0;
+        foreach (var item in tr)
+        {
+            if (cc == 1)
+            {
+                director.SetGenericBinding(item, theOneMonster);
+            }
+            cc++;
+        }
         director.Play();
     }
 
@@ -852,6 +1306,8 @@ public class SpawnCHANDE : MonoBehaviour {
         director.Play();
     }
 
+
+    //To choose magi sound and animation based on magic type
     public void MagiChooser()
     {
         //0:"Basic Magic",1:"Fire",2:"Blizzard",3:"Shock",4:"Natura"
@@ -886,7 +1342,6 @@ public class SpawnCHANDE : MonoBehaviour {
     //StatUSER   (0: missed,1: normalATK,2:criticalATK,3:defence ,4: normal magi,5:critical magi ,6:  failed flee, 7: flee)
     public void HitChooser(String hititpe)
     {
-
         if (hititpe.Contains("Missed"))
         {
             globalSoundsFun = 6;
@@ -961,13 +1416,16 @@ public class SpawnCHANDE : MonoBehaviour {
         PlayableDirector director = playableEnemies[animType];
         IEnumerable<TrackAsset> tr = timelinesEnemies[animType].GetOutputTracks();
         int cc = 0;
-        foreach (var item in tr)
-        {
-            if (cc == 1)
+        if (globalFun < 7 && globalFun > 2)
+        { 
+            foreach (var item in tr)
             {
-                //director.SetGenericBinding(item, theOneInstantiated);
+                if (cc == 1)
+                {
+                    director.SetGenericBinding(item, theOneMonster);
+                }
+                cc++;
             }
-            cc++;
         }
         director.Play();
     }
@@ -1006,4 +1464,60 @@ public class SpawnCHANDE : MonoBehaviour {
 
     #endregion
 
+    #region BlueMoon
+    
+    //to play blue moon animation according to the character attack
+    public void BlueAttack(int plaier)
+    {
+        //(1:Undead,2:Witch,3:Samurai,4:RiceMan)
+        int directornum = 0;
+        switch (plaier)
+        {
+            case 1:
+                directornum = 18;
+                break;
+            case 2:
+                directornum = 21;
+                break;
+            case 3:
+                directornum = 19;
+                break;
+            case 4:
+                directornum = 20;
+                break;
+            default:
+                break;
+        }
+        PlayableDirector director = playableDirectors[directornum];
+        IEnumerable<TrackAsset> tr = timelines[directornum].GetOutputTracks();
+        int cc = directornum == 18 ? 2 : 0;
+        foreach (var item in tr)
+        {
+            if (cc == 1)
+            {
+                director.SetGenericBinding(item, theOneInstantiated);
+            }
+            cc++;
+        }
+        director.Play();
+    }
+
+    //to play blue moon animation according to the character magi
+    public void BlueMagic()
+    {
+        PlayableDirector director = playableDirectors[17];
+        IEnumerable<TrackAsset> tr = timelines[17].GetOutputTracks();
+        int cc = 0;
+        foreach (var item in tr)
+        {
+            if (cc == 1)
+            {
+                director.SetGenericBinding(item, theOneInstantiated);
+            }
+            cc++;
+        }
+        director.Play();
+    }
+
+    #endregion
 }

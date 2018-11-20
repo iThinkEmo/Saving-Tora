@@ -6,7 +6,7 @@ using System.Collections.Generic;
 //For documentation please refer to MagicForNonHumans.txt
 public class Magica
 {
-    public string[] magicType = { "Basic ", "Fire", "Blizzard", "Shock", "Natura" };
+    public string[] magicType = { "Basic", "Fire", "Blizzard", "Shock", "Natura" };
     public string[] magicLevel = { "", "", "Big ", "Death ", "God " };
     public string[] descriptionA = { "It is almost like no magic", "It burns ", "It cools ", "It electrocutes ", "It calms " };
     public string[] descriptionB = { "...", "a little.", "a lot.", "so much that it might kill somebody.", "like a god." };

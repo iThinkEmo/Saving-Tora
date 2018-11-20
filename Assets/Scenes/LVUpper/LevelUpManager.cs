@@ -39,6 +39,8 @@ public class LevelUpManager : MonoBehaviour
     GameObject playerLevel;
     [SerializeField]
     GameObject theNurse;
+    [SerializeField]
+    GameObject theOKButton;
 
 
 
@@ -47,7 +49,8 @@ public class LevelUpManager : MonoBehaviour
     // Use this for initialization
     void Start ()
     {
-        Invoke("Ultron", 3);
+        theOKButton.SetActive(false);
+        Invoke("Ultron", 2);
         gameManagerDelJuego = GameManager.Instance;
         fEnd = sm.GetEnd();
         playerStats = gameManagerDelJuego.GetPlayerUber();
@@ -73,6 +76,7 @@ public class LevelUpManager : MonoBehaviour
         MoneyApplier();
         WinLoseApplier();
         Texter();
+        Invoke("Okeyer", 2.0f);
     }
 
     void Update()
@@ -130,6 +134,11 @@ public class LevelUpManager : MonoBehaviour
     {
         playerLevel.gameObject.GetComponent<Text>().text = "Lv " + playerStats.lv;
         playerExp.fillAmount = playerStats.ExpPercentage();
+    }
+
+    public void Okeyer()
+    {
+        theOKButton.SetActive(true); 
     }
 
     public void ExpUpdater()
@@ -245,6 +254,7 @@ public class LevelUpManager : MonoBehaviour
         }
         else
         {
+            gameManagerDelJuego.loseFight = true;
             levelUpperBars.SetActive(false);
             BSource.clip = BackMusic[1];
         }

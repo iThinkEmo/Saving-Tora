@@ -11,8 +11,11 @@ public class LoadDiceScene : MonoBehaviour {
 		gameManagerDelJuego = GameManager.Instance;
 		GameObject rules = GameObject.FindGameObjectWithTag("rules");
 		if (rules){
-			// Prende el timeline de las instrucciones
+			// En transition se encuentra el Script de SpawnInit,
+			// que es el que muestra a los personajes y el dado
 			rules.transform.GetChild(22).gameObject.SetActive(true);
+			
+			// Prende el timeline de las instrucciones
 			// rules.transform.GetChild(23).gameObject.SetActive(true);
 		}
 		GameObject shopkeeper = GameObject.FindGameObjectWithTag("Shopkeeper");
@@ -20,9 +23,9 @@ public class LoadDiceScene : MonoBehaviour {
 			shopkeeper.transform.GetChild(0).gameObject.SetActive(true);
 		}
 
-		// gameManagerDelJuego.AddSelectUserCharacter("Ald", 1);
+		gameManagerDelJuego.AddSelectUserCharacter("Ald", 1);
 		// gameManagerDelJuego.AddSelectUserCharacter("Mar", 2);
-		gameManagerDelJuego.AddSelectUserCharacter("Kar", 3);
+		// gameManagerDelJuego.AddSelectUserCharacter("Kar", 3);
 		gameManagerDelJuego.AddSelectUserCharacter("Irv", 4);
 		gameManagerDelJuego.numberOfPlayers = 2;
 		gameManagerDelJuego.WhoStarts();

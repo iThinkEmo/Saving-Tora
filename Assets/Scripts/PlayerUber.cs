@@ -27,8 +27,10 @@ public class PlayerUber {
     public int maxExp;
     //money
     public int money = 0;
-    //money
+    // Turns that the player is to skip
     public int turnsToSkip = 0;
+    // Is this player currently on a fight?
+    public bool onDuty = false;
     //fans
     public int fans = 0;
     //Gender
@@ -422,7 +424,7 @@ public class PlayerUber {
     public void Undead(int gen)
     {
         maxhp = 60;
-        hp = 150;
+        hp = 60;
         mp = 6;
         ap = 20;
         dp = 20;

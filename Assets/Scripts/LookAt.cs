@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using UnityEngine.UI;
 
 public class LookAt : MonoBehaviour {
 
@@ -9,17 +10,12 @@ public class LookAt : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		GameObject objectToLookAt = GameObject.FindGameObjectWithTag("Node");
-		GameObject virtualCameraGO = GameObject.FindGameObjectWithTag("Virtual Camera 2");
-		if (virtualCameraGO) {
-			CinemachineVirtualCamera virtualCamera = virtualCameraGO.GetComponent<CinemachineVirtualCamera>();
-			if(virtualCamera){
-				virtualCamera.LookAt = objectToLookAt.transform;
-			}
-		}		
+			
 	}
 
 	public static void LookAtNextCharacter(string character, string characterArm){
+		DisplayTurn();
+		
 		GameObject player = GameObject.FindGameObjectWithTag(character);
 		GameObject charArm = GameObject.FindGameObjectWithTag(characterArm);
 		GameObject virtualCameraGO = GameObject.FindGameObjectWithTag("Virtual Camera 2");
@@ -54,10 +50,28 @@ public class LookAt : MonoBehaviour {
 			if (fadingTimeline && !gameManagerDelJuego.changedScene){
 				fadingTimeline.transform.GetChild(1).gameObject.SetActive(true);
 			}
-			else if(gameManagerDelJuego.changedScene){
-				gameManagerDelJuego.changedScene = false;
-			}
 		}
+	}
+
+	public static void DisplayTurn(){
+		GameObject whosNext = GameObject.FindGameObjectWithTag("whoNext");
+		if (whosNext){
+			GameObject timeline = whosNext.transform.GetChild(2).gameObject;
+			GameObject dialogText = whosNext.transform.GetChild(1).gameObject;
+			dialogText.GetComponent<Text>().text = 
+				gameManagerDelJuego.orderedPlayers[0] + " , it's your turn!";
+
+			PlayerUber player = gameManagerDelJuego.GetPlayerUber();
+			if (player.onDuty){
+				dialogText.GetComponent<Text>().text += "\n But you shall keep fighting!"; 
+			}
+
+			timeline.SetActive(true);
+		}
+		if (gameManagerDelJuego.turnsCount % gameManagerDelJuego.numberOfPlayers == 0){
+			MoonCycle.ChangeMoonCycle();
+		}
+		gameManagerDelJuego.turnsCount ++;
 	}
 	
 	// Update is called once per frame

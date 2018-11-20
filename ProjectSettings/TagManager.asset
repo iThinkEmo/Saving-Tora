@@ -50,6 +50,9 @@ TagManager:
   - stayTurn
   - fadingTimeline
   - cleverCamera
+  - whoNext
+  - Statues
+  - SunMoon
   layers:
   - Default
   - TransparentFX
@@ -66,8 +69,8 @@ TagManager:
   - Ground
   - AccessibleVolume
   - Characters
-  - 
-  - 
+  - NightSky
+  - Factory
   - 
   - 
   - 

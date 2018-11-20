@@ -14,11 +14,14 @@ class StatusMaker
     string[] monsterFiles = { "P1Monster.json", "P2Monster.json", "P3Monster.json", "P4Monster.json" };
     static string[] playerMainFiles = { "P1.json", "P2.json", "P3.json", "P4.json" };
 
-    //Constructor to Know its a fight one
-    //cP = currentPlayer: To know which character to spawn
-    //1:Witch, 2:Samurai,3:Undead,4: RiceMonk
-    //a  = Area         : To know which monster to spawn based on the area
-    //tOF= Type of Fight: 0:Normal, 1:BOSS, 2:ULTRABOSS
+
+    /// <summary>
+    /// Constructor to initialize a fight
+    /// cP = currentPlayer: To know which character to spawn
+    /// 1:Witch, 2:Samurai,3:Undead,4: RiceMonk
+    /// a  = Area: To know which monster to spawn based on the area
+    /// tOF= Type of Fight: 0:Normal, 1:BOSS, 2:ULTRABOSS
+    /// </summary>
     public StatusMaker(int cP, int a, int tOF)
     {
         fStat = new StatusForFight(cP, a, tOF);
@@ -33,7 +36,7 @@ class StatusMaker
         filenamec = "statusFight.json";
         path1 = Application.persistentDataPath + "/" + filenamec;
         jsonString = JsonConvert.SerializeObject(fStat, Formatting.Indented);
-        Debug.Log(path1);
+        //Debug.Log(path1);
         System.IO.File.WriteAllText(path1, jsonString);
     }
 
@@ -78,7 +81,7 @@ class StatusMaker
     {
         filenamec = getMonsterFile(numberPlayer);
         path1 = Application.persistentDataPath + "/" + filenamec;
-        jsonString = JsonConvert.SerializeObject(new EnemyClass(monsterNo), Formatting.Indented);
+        jsonString = JsonConvert.SerializeObject(new EnemyClass(monsterNo-1), Formatting.Indented);
         Debug.Log(path1);
         System.IO.File.WriteAllText(path1, jsonString);
         EnemyClass sFight = JsonConvert.DeserializeObject<EnemyClass>(jsonString);
@@ -118,6 +121,7 @@ class StatusMaker
         filenamec = "statusFight.json";
         path1 = Application.persistentDataPath + "/" + filenamec;
         jsonString = System.IO.File.ReadAllText(path1);
+        //Debug.Log(path1);
         StatusForFight sFight = JsonConvert.DeserializeObject<StatusForFight>(jsonString);
         return sFight;
     }
@@ -177,7 +181,7 @@ class StatusMaker
         //jsonString = System.IO.File.ReadAllText(path1);
         //PlayerUber sFight = JsonConvert.DeserializeObject<PlayerUber>(jsonString);
         jsonString = JsonConvert.SerializeObject(player, Formatting.Indented);        
-        Debug.Log(path1);
+        // Debug.Log(path1);
         System.IO.File.WriteAllText(path1, jsonString);
     }
 
@@ -252,6 +256,27 @@ class StatusMaker
     }
 
     #endregion
+
+    public CoreDatum GetCore(string folderWithSlash)
+    {
+        filenamec = "core.json";
+        path1 = Application.persistentDataPath + "/"+ folderWithSlash + filenamec;
+        jsonString = System.IO.File.ReadAllText(path1);
+        CoreDatum sFight = JsonConvert.DeserializeObject<CoreDatum>(jsonString);
+        Debug.Log(path1);
+        return sFight;
+    }
+
+    public void SetCore(int one, string folderWithSlash)
+    {
+        CoreDatum fend = new CoreDatum(1);
+        filenamec = "core.json";
+        path1 = Application.persistentDataPath + "/" + folderWithSlash + filenamec;
+        jsonString = JsonConvert.SerializeObject(fend, Formatting.Indented);
+        Debug.Log(path1);
+        System.IO.File.WriteAllText(path1, jsonString);
+    }
+
 }
 
 class StatusForFight
@@ -320,6 +345,286 @@ public class FightEnd
         this.money = awardedMoney;
         this.win = didWin;
         this.tLost = turnsLost;
+    }
+}
+
+public class SaveFile
+{
+    private GameManager gameManagerDelJuego;
+
+    public string filenamec;
+    public string path1;
+    public string jsonString;
+
+    public FightEnd fightEnded;
+    StatusForFight statusFight;
+
+    public PlayerStatusGlobal P1;
+    public PlayerStatusGlobal P2;
+    public PlayerStatusGlobal P3;
+    public PlayerStatusGlobal P4;
+
+    public EnemyClass P1Monster;
+    public EnemyClass P2Monster;
+    public EnemyClass P3Monster;
+    public EnemyClass P4Monster;
+
+    public PlayerUber magician;
+    public PlayerUber rice;
+    public PlayerUber samurai;
+    public PlayerUber undead;
+
+    public CoreDatum coreD;
+
+    public SaveFile()
+    {
+        ;
+    }
+
+    public void SaveGame(int i)
+    {
+        string thefolder = "save" + i;
+        ReadAll();
+        WriteAllSave(thefolder);
+    }
+
+    //To read all objects to Jsons
+    public void ReadAll()
+    {
+        UltraReader( "fightended", 0);
+        UltraReader( "statusFight", 1);
+        UltraReader( "P1", 2);
+        UltraReader( "P2", 3);
+        UltraReader( "P3", 4);
+        UltraReader( "P4", 5);
+        UltraReader( "P1Monster", 6);
+        UltraReader( "P2Monster", 7);
+        UltraReader( "P3Monster", 8);
+        UltraReader( "P4Monster", 9);
+        UltraReader("magician", 10);
+        UltraReader( "rice", 11);
+        UltraReader( "samurai", 12);
+        UltraReader("undead", 13);
+        UltraReader("core", 14);
+    }
+
+    //To write all objects to Jsons
+    public void WriteAll()
+    {
+        UltraWriter(-1, "fightended", 0);
+        UltraWriter(-1, "statusFight", 1);
+        UltraWriter(1, "P", 2);
+        UltraWriter(2, "P", 3);
+        UltraWriter(3, "P", 4);
+        UltraWriter(4, "P", 5);
+        UltraWriter(-1, "P1Monster", 6);
+        UltraWriter(-1, "P2Monster", 7);
+        UltraWriter(-1, "P3Monster", 8);
+        UltraWriter(-1, "P4Monster", 9);
+        UltraWriter(-1, "magician", 10);
+        UltraWriter(-1, "rice", 11);
+        UltraWriter(-1, "samurai", 12);
+        UltraWriter(-1, "undead", 13);
+        UltraWriter(-1, "core", 14);
+    }
+
+    //To read all objects to Jsons on the new folder
+    public void ReadAllSave(string theFolder)
+    {
+        SaveReader("fightended", 0, theFolder);
+        SaveReader("statusFight", 1, theFolder);
+        SaveReader("P1", 2, theFolder);
+        SaveReader("P2", 3, theFolder);
+        SaveReader("P3", 4, theFolder);
+        SaveReader("P4", 5, theFolder);
+        SaveReader("P1Monster", 6, theFolder);
+        SaveReader("P2Monster", 7, theFolder);
+        SaveReader("P3Monster", 8, theFolder);
+        SaveReader("P4Monster", 9, theFolder);
+        SaveReader("magician", 10, theFolder);
+        SaveReader("rice", 11, theFolder);
+        SaveReader("samurai", 12, theFolder);
+        SaveReader("undead", 13, theFolder);
+        SaveReader("core", 14, theFolder);
+    }
+
+    //To write all objects to Jsons on the new folder
+    public void WriteAllSave(string theFolder)
+    {
+        SaveWriter(-1, "fightended", 0, theFolder);
+        SaveWriter(-1, "statusFight", 1, theFolder);
+        SaveWriter(1, "P", 2, theFolder);
+        SaveWriter(2, "P", 3, theFolder);
+        SaveWriter(3, "P", 4, theFolder);
+        SaveWriter(4, "P", 5, theFolder);
+        SaveWriter(-1, "P1Monster", 6, theFolder);
+        SaveWriter(-1, "P2Monster", 7, theFolder);
+        SaveWriter(-1, "P3Monster", 8, theFolder);
+        SaveWriter(-1, "P4Monster", 9, theFolder);
+        SaveWriter(-1, "magician", 10, theFolder);
+        SaveWriter(-1, "rice", 11, theFolder);
+        SaveWriter(-1, "samurai", 12, theFolder);
+        SaveWriter(-1, "undead", 13, theFolder);
+        SaveWriter(-1, "core", 14, theFolder);
+    }
+
+    //Writes jsons  to main files
+    //0:FightEnd ,1:statusFight,2:P1,3:P2,4:P3,5:P4,6:P1Monster,7:P2Monster,8:P3Monster,9:P4Monster,10:magician ,11:rice, 12:samurai, 13:undead,14:core
+    public void UltraWriter(int nummer,string jsonName, int objectNumber)
+    {
+        filenamec = nummer > -1 ? jsonName +nummer+ ".json" :  jsonName + ".json";
+        path1 = Application.persistentDataPath + "/" + filenamec;
+        Debug.Log(path1);
+        System.IO.File.WriteAllText(path1, serializeObj(objectNumber));
+    }
+
+    public void UltraReader(string jsonName, int objectNumber)
+    {
+        filenamec = jsonName + ".json";
+        path1 = Application.persistentDataPath + "/" + filenamec;
+        jsonString = System.IO.File.ReadAllText(path1);
+        deSerializeObj(objectNumber);
+    }
+
+    //Writes jsons  to main files
+    //0:FightEnd ,1:statusFight,2:P1,3:P2,4:P3,5:P4,6:P1Monster,7:P2Monster,8:P3Monster,9:P4Monster,10:magician ,11:rice, 12:samurai, 13:undead,14:core
+    public void SaveWriter(int nummer, string jsonName, int objectNumber, string folder)
+    {
+        filenamec = nummer > -1 ? jsonName + nummer + ".json" : jsonName + ".json";
+        path1 = Application.persistentDataPath + "/" + folder + "/" + filenamec;
+        Debug.Log(path1);
+        System.IO.File.WriteAllText(path1, serializeObj(objectNumber));
+    }
+
+    public void SaveReader(string jsonName, int objectNumber, string folder)
+    {
+        filenamec = jsonName + ".json";
+        path1 = Application.persistentDataPath + "/" + folder+"/" + filenamec;
+        jsonString = System.IO.File.ReadAllText(path1);
+        deSerializeObj(objectNumber);
+    }
+
+    //0:FightEnd ,1:statusFight,2:P1,3:P2,4:P3,5:P4,6:P1Monster,7:P2Monster,8:P3Monster,9:P4Monster,10:magician ,11:rice, 12:samurai, 13:undead,14:core
+    public string serializeObj(int objectNumber)
+    {
+        switch (objectNumber)
+        {
+            case 0:
+                jsonString = JsonConvert.SerializeObject(fightEnded, Formatting.Indented);
+                break;
+            case 1:
+                jsonString = JsonConvert.SerializeObject(statusFight, Formatting.Indented);
+                break;
+            case 2:
+                jsonString = JsonConvert.SerializeObject(P1, Formatting.Indented);
+                break;
+            case 3:
+                jsonString = JsonConvert.SerializeObject(P2, Formatting.Indented);
+                break;
+            case 4:
+                jsonString = JsonConvert.SerializeObject(P3, Formatting.Indented);
+                break;
+            case 5:
+                jsonString = JsonConvert.SerializeObject(P4, Formatting.Indented);
+                break;
+            case 6:
+                jsonString = JsonConvert.SerializeObject(P1Monster, Formatting.Indented);
+                break;
+            case 7:
+                jsonString = JsonConvert.SerializeObject(P2Monster, Formatting.Indented);
+                break;
+            case 8:
+                jsonString = JsonConvert.SerializeObject(P3Monster, Formatting.Indented);
+                break;
+            case 9:
+                jsonString = JsonConvert.SerializeObject(P4Monster, Formatting.Indented);
+                break;
+            case 10:
+                jsonString = JsonConvert.SerializeObject(magician, Formatting.Indented);
+                break;
+            case 11:
+                jsonString = JsonConvert.SerializeObject(rice, Formatting.Indented);
+                break;
+            case 12:
+                jsonString = JsonConvert.SerializeObject(samurai, Formatting.Indented);
+                break;
+            case 13:
+                jsonString = JsonConvert.SerializeObject(undead, Formatting.Indented);
+                break;
+            case 14:
+                jsonString = JsonConvert.SerializeObject(coreD, Formatting.Indented);
+                break;
+            default:
+                break;
+        }
+        return jsonString;
+    }
+
+    //0:FightEnd ,1:statusFight,2:P1,3:P2,4:P3,5:P4,6:P1Monster,7:P2Monster,8:P3Monster,9:P4Monster,10:magician ,11:rice, 12:samurai, 13:undead,14:core
+    public string deSerializeObj(int objectNumber)
+    {
+        switch (objectNumber)
+        {
+            case 0:
+                fightEnded = JsonConvert.DeserializeObject<FightEnd>(jsonString);
+                break;
+            case 1:
+                statusFight = JsonConvert.DeserializeObject<StatusForFight>(jsonString);
+                break;
+            case 2:
+                P1 = JsonConvert.DeserializeObject<PlayerStatusGlobal>(jsonString);
+                break;
+            case 3:
+                P2 = JsonConvert.DeserializeObject<PlayerStatusGlobal>(jsonString);
+                break;
+            case 4:
+                P3 = JsonConvert.DeserializeObject<PlayerStatusGlobal>(jsonString);
+                break;
+            case 5:
+                P4 = JsonConvert.DeserializeObject<PlayerStatusGlobal>(jsonString);
+                break;
+            case 6:
+                P1Monster = JsonConvert.DeserializeObject<EnemyClass>(jsonString);
+                break;
+            case 7:
+                P2Monster = JsonConvert.DeserializeObject<EnemyClass>(jsonString);
+                break;
+            case 8:
+                P3Monster = JsonConvert.DeserializeObject<EnemyClass>(jsonString);
+                break;
+            case 9:
+                P4Monster = JsonConvert.DeserializeObject<EnemyClass>(jsonString);
+                break;
+            case 10:
+                magician = JsonConvert.DeserializeObject<PlayerUber>(jsonString);
+                break;
+            case 11:
+                rice = JsonConvert.DeserializeObject<PlayerUber>(jsonString);
+                break;
+            case 12:
+                samurai = JsonConvert.DeserializeObject<PlayerUber>(jsonString);
+                break;
+            case 13:
+                undead = JsonConvert.DeserializeObject<PlayerUber>(jsonString);
+                break;
+            case 14:
+                coreD = JsonConvert.DeserializeObject<CoreDatum>(jsonString);
+                break;
+            default:
+                break;
+        }
+        return jsonString;
+    }
+
+}
+
+public class CoreDatum
+{
+    public int algo = 0;
+
+    public CoreDatum(int one)
+    {
+        algo = one;
     }
 }
 

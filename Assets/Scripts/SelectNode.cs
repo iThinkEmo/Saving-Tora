@@ -153,11 +153,11 @@ public class SelectNode : MonoBehaviour {
 
 					switch (typeOfSpace) {
 						case 0:
-							StartCoroutine(LoadNextPlayer());
-							
-							// ResetPila(saviour);
-							// ActivateCharacters(false);
-							// LoadFightScene(saviour, player);
+							//StartCoroutine(LoadNextPlayer());
+
+							ResetPila(saviour);
+							ActivateCharacters(false);
+							LoadFactoryScene(saviour, player);
 							break;
 						case 1:
 							ResetPila(saviour);
@@ -175,6 +175,9 @@ public class SelectNode : MonoBehaviour {
 							GiveMeSomeRest(saviour, player);
 							break;
 						case 5:
+							ResetPila(saviour);
+							ActivateCharacters(false);
+							LoadFactoryScene(saviour, player);
 							break;
 						default:
 							break;
@@ -208,14 +211,22 @@ public class SelectNode : MonoBehaviour {
 			gameManagerDelJuego.NombreNivelQueSeVaCargar = "FightScene";
         	SceneManager.LoadScene("PantallaCargandoLoadingScreen");
 		}
-        
     }
+
 	public static IEnumerator LoadNextPlayer(){
 		// En el caso de que regrese de la pelea o de la tienda,
 		// vuelve a prender a los objetos 
 		SelectNode.ActivateCharacters(true);
 
-		gameManagerDelJuego.nextPlayer();
+		if (!gameManagerDelJuego.samePlayer){
+            // No acabamos de mostrar la escena del cambio de fase de la luna
+            // Cargar al siguiente personaje
+			gameManagerDelJuego.nextPlayer();
+		} else {
+			// Cargar al mismo personaje, pues mostramos la escena de la luna azul
+			// resetear la variable para que al siguiente turno cargue al otro jugador
+			gameManagerDelJuego.samePlayer = false;
+		}
 		currentPlayer = gameManagerDelJuego.GetCurrentPlayer();
 
 		string character = gameManagerDelJuego.idCharacter[currentPlayer];
@@ -251,6 +262,12 @@ public class SelectNode : MonoBehaviour {
 	public void MoveForwardCurrentPlayer(){
 		PlayerUber player = gameManagerDelJuego.GetPlayerUber();
 		Saviour saviour = gameManagerDelJuego.GetCurrentSaviour();
+		if (player.onDuty){
+			// este jugador debe seguir peleando
+			ResetPila(saviour);
+			ActivateCharacters(false);
+			LoadFightScene(saviour, player);
+		}
 		if (player.turnsToSkip == 0){
 			//se obtiene el jugador para saber cuál mover
 			currentPlayer = gameManagerDelJuego.GetCurrentPlayer();
@@ -264,15 +281,25 @@ public class SelectNode : MonoBehaviour {
 		}
 		// Quiere decir que este jugador debe pasar un turno, pues perdió en batalla
 		else{
-			NotYetYourTurn(player);
+			StartCoroutine(NotYetYourTurn(player));
 		}
 	}
 
-	public void NotYetYourTurn(PlayerUber player){	
+	public IEnumerator NotYetYourTurn(PlayerUber player){
+		Saviour saviour = gameManagerDelJuego.GetCurrentSaviour();
+		if (saviour.gameObject != this.gameObject){
+			yield break;
+		}
+		yield return null;
+
+		// En este punto ya se sabe que hay solo una instancia de SelectNode activa
+		// Las demás instancias ya se "salieron" debido al yield break;	
 
 		GameObject stayTurn = GameObject.FindGameObjectWithTag("stayTurn");
 		if (stayTurn){
-			
+			// Para evitar que regrese a este mismo punto y se cicle al mismo personaje
+			Dice.finishedBouncing = false;
+
 			GameObject timeline = stayTurn.transform.GetChild(2).gameObject;
 			GameObject dialogText = stayTurn.transform.GetChild(1).gameObject;
 			dialogText.GetComponent<Text>().text = 
@@ -280,6 +307,7 @@ public class SelectNode : MonoBehaviour {
 			timeline.SetActive(true);
 
 			player.turnsToSkip --;
+			saviour.turnsToSkip --;
 			StatusMaker sm = new StatusMaker();
 			sm.SetPlayer(PlayerUber.normalizeCurrentPlayer(currentPlayer), player);
 			
@@ -311,7 +339,6 @@ public class SelectNode : MonoBehaviour {
 				coins.transform.Translate(0, 1.34f, 0, Space.World);
 				SpecialGameEvents specialGameEvents = new SpecialGameEvents();
 				string[] text = specialGameEvents.ChestInteraction(1, player, saviour, currentPlayer);
-				Debug.Log("Dinero: "+player.money);
 				GameObject coinsGO = coins.transform.GetChild(0).gameObject;
 				StartCoroutine(PlayCoinAnimation(coinsGO, text));
 			}
@@ -345,7 +372,7 @@ public class SelectNode : MonoBehaviour {
 		}
 		
 	}
-	
+
 	public void GiveMeHealthCare(Saviour saviour, PlayerUber player){
 		Dice.finishedBouncing = false;
 		SpecialGameEvents specialGameEvents = new SpecialGameEvents();
@@ -379,6 +406,83 @@ public class SelectNode : MonoBehaviour {
 			textInn.GetComponent<Text>().text = innDialogue[0] + "\n" + innDialogue[1] + innDialogue[2];
 		}
 	}
+
+	public void LoadFactoryScene(Saviour saviour, PlayerUber player){
+		if (FactoryAlreadyDistroyed(saviour)){
+			ActivateCharacters(true);
+			StartCoroutine(LoadNextPlayer());
+		}
+		else{
+			int cp = PlayerUber.normalizeCurrentPlayer(currentPlayer);
+			// Guarda el número de jugador
+			StatusMaker sm = new StatusMaker(cp, 1, 1);
+			sm.MakeAndPostJSONFight();
+			
+			sm.SetPlayer(cp, player);
+			gameManagerDelJuego.currentSaviour = saviour;
+
+			Dice.finishedBouncing = false;
+			gameManagerDelJuego.changedScene = true;
+
+			gameManagerDelJuego.NombreNivelQueSeVaCargar = "FightScene";
+			SceneManager.LoadScene("PantallaCargandoLoadingScreen");
+		}
+    }
+
+	private bool FactoryAlreadyDistroyed(Saviour saviour){
+		try{
+			if (gameManagerDelJuego.bossWinners[saviour.currentNode] != 0){
+				return true;
+			}
+			return false;
+		}
+		catch (KeyNotFoundException){
+			return false;
+		}
+	}
+
+	public static IEnumerator ChangeNodeMaterial(){
+		foreach (KeyValuePair<int, int> entry in gameManagerDelJuego.bossWinners) {
+			if (gameManagerDelJuego.bossWinners[entry.Key] != 0){
+				Debug.Log(entry.Key + " " + entry.Value);
+				GameObject node = GameObject.Find("Node "+entry.Key);
+				if (node){
+					GameObject cilinder = node.transform.GetChild(0).gameObject;
+					if (cilinder){
+						GameObject material = GameObject.Find("GoldenPlayers");
+						if (material){
+							GoldenNodes materials = material.GetComponent<GoldenNodes>();
+							Material[] mats = cilinder.GetComponent<Renderer>().materials;
+							mats[1] = materials.goldenPlayers[entry.Value-1];
+							cilinder.GetComponent<Renderer>().materials = mats;
+						}
+					}
+				}
+			}
+		}
+		yield return null;
+	}
+
+	public static IEnumerator SendToHospital(){
+		Saviour saviour = gameManagerDelJuego.GetCurrentSaviour();
+		PlayerUber player = gameManagerDelJuego.GetPlayerUber();
+		int hospitalNode = NodesMap.hospitalAreaNode[gameManagerDelJuego.GetCurrentPlayerArea()];
+		saviour.transform.position = NodesMap.nodesPosition[hospitalNode];
+		saviour.currentNode = hospitalNode;
+		saviour.oldNode = hospitalNode;
+		saviour.selectedNode = hospitalNode;
+		SpecialGameEvents.RecoverHealth(player, saviour, currentPlayer);
+		player.turnsToSkip = 2;
+		saviour.turnsToSkip = 2;
+		// Se guardan los cambios en el JSON para que puedan ser cargados
+		// Siempre que se utilice el gameManagerDelJuego.GetPlayerUber();
+		StatusMaker sm = new StatusMaker();
+		sm.SetPlayer(PlayerUber.normalizeCurrentPlayer(currentPlayer), player);
+		saviour.AvoidCollision();
+        gameManagerDelJuego.loseFight = false;
+		yield return null;
+	}
+	
 
 	private static void ResetPila(Saviour saviour){
 		saviour.pila.Clear();
@@ -471,14 +575,6 @@ public class SelectNode : MonoBehaviour {
 
 		if (stay){
 	        SpecialGameEvents.RecoverHealth(player, saviour, currentPlayer);
-			Debug.Log(player.hp);
-			Debug.Log(saviour.hp);
-			player.turnsToSkip = 2;
-			saviour.turnsToSkip = 2;
-			// Se guardan los cambios en el JSON para que puedan ser cargados
-			// Siempre que se utilice el gameManagerDelJuego.GetPlayerUber();
-			StatusMaker sm = new StatusMaker();
-			sm.SetPlayer(PlayerUber.normalizeCurrentPlayer(currentPlayer), player);
 		}
 		ResetPila(gameManagerDelJuego.currentSaviour);
 		StartCoroutine(LoadNextPlayer());
@@ -551,7 +647,6 @@ public class SelectNode : MonoBehaviour {
 	        SpecialGameEvents.RecoverHealth(player, saviour, currentPlayer);
 			ResetPila(gameManagerDelJuego.currentSaviour);
 			StartCoroutine(LoadNextPlayer());
-			// Implementar el pasar turno
 		}
 		else{
 			Dice.finishedBouncing = true;

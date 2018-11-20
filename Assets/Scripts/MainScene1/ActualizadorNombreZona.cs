@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class ActualizadorNombreZona : MonoBehaviour {
 
+    public GameObject ImagenDeLuna;
     public GameObject LetreroNombreZona;
     public Text TextoNombreDeLaZona;
     //Variable privada del gamemanager que es un singleton-
@@ -24,6 +25,10 @@ public class ActualizadorNombreZona : MonoBehaviour {
             {
                 LetreroNombreZona.SetActive(true);
             }
+            if (!ImagenDeLuna.activeInHierarchy)
+            {
+                ImagenDeLuna.SetActive(true);
+            }
             int currentPlayer = _gameManagerDelJuego.GetCurrentPlayer();
             string character = _gameManagerDelJuego.idCharacter[currentPlayer];
             GameObject currentCharacter = GameObject.Find(character);
@@ -35,6 +40,11 @@ public class ActualizadorNombreZona : MonoBehaviour {
                     int area = NodesMap.nodesArea["Node " + saviour.currentNode];
                     string areaName = NodesMap.areaName[area];
                     TextoNombreDeLaZona.text = areaName;
+                }
+
+                GameObject moons = GameObject.Find("Moons");
+                if (moons){
+                    moons.transform.GetChild(_gameManagerDelJuego.moonPhase).gameObject.SetActive(true);
                 }
             }
         }

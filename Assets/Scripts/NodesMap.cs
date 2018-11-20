@@ -67,11 +67,11 @@ public class NodesMap : MonoBehaviour {
 		{55, 58, 57, 0, 0 },
 		{56, 0, 46, 59, 0 },
 		{56, 59, 0, 0, 0 },
-		{58, 0, 57, 0, 3 },
-		{0, 61, 0, 0, 0 },
+		{58, 60, 57, 0, 3 },
+		{59, 61, 0, 0, 0 },
 		{60, 62, 0, 0, 0 },
 		{0, 0, 61, 63, 0 },
-		{0, 64, 62, 0, 0 },
+		{84, 64, 62, 0, 0 },
 		{63, 66, 0, 65, 0 },
 		{64, 0, 66, 0, 3 },
 		{64, 0, 67, 65, 0 },
@@ -92,7 +92,7 @@ public class NodesMap : MonoBehaviour {
 		{80, 82, 0, 0, 5 },
 		{0, 0, 81, 83, 0 },
 		{0, 0, 82, 78, 0 },
-		{0, 0, 85, 111, 0 },
+		{0, 63, 85, 111, 0 },
 		{86, 84, 0, 0, 4 },
 		{87, 85, 0, 0, 0 },
 		{112, 86, 88, 109, 0 },
@@ -124,16 +124,17 @@ public class NodesMap : MonoBehaviour {
 		{114, 88, 116, 112, 0 },
 		{104, 113, 119, 115, 0 },
 		{0, 112, 114, 0, 5 },
-		{119, 93, 117, 113, 5 },
+		{119, 93, 117, 113, 0 },
 		{118, 0, 95, 116, 0 },
 		{121, 117, 96, 119, 0 },
-		{120, 119, 118, 114, 0 },
+		{120, 116, 118, 114, 5 },
 		{123, 119, 121, 104, 0 },
 		{122, 118, 97, 120, 0 },
 		{100, 121, 98, 123, 5 },
 		{101, 120, 122, 103, 0 },
 		{26, 35, 0, 0, 0 },
 	};
+	
 	public static Vector3[] nodesPosition = new Vector3[] {
         new Vector3(0, 0, 0),
         new Vector3(44.9f, -3.3f, 7.0f),
@@ -395,6 +396,14 @@ public class NodesMap : MonoBehaviour {
 			{ 2, "Troll Mountains" },
 			{ 3, "Underlains" },
 			{ 4, "LiftHelm Statal Union" }
+		};
+
+	public static Dictionary<int, int> hospitalAreaNode = new Dictionary<int, int>
+		{
+			{ 1, 23 },
+			{ 2, 59 },
+			{ 3, 65 },
+			{ 4, 92 }
 		};
 
 	public static void DisplayCurrentNode(int node){

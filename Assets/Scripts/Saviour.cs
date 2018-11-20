@@ -29,8 +29,10 @@ public class Saviour : MonoBehaviour {
     public int maxExp;
     //money
     public int money = 0;
-    //money
+    // Turns that the player is to skip
     public int turnsToSkip = 0;
+    // Is this player currently on a fight?
+    public bool onDuty = false;
     //fans
     public int fans = 0;
     //Gender
@@ -303,12 +305,7 @@ public class Saviour : MonoBehaviour {
 
         // Se mueve para adelanta
         if (selectedNode!=oldNode){
-            Saviour saviour = gameManagerDelJuego.currentSaviour;
-            if (saviour){
-                if (saviour.currentNode == selectedNode){
-                    Debug.Log("YESSSS");
-                }
-            }
+            AvoidCollision();
             oldNode=currentNode;
             currentNode=selectedNode;
 			SelectNode.spacesLeft--;
@@ -317,6 +314,7 @@ public class Saviour : MonoBehaviour {
 		}
         // Se regresa un nodo
         else{
+            AvoidCollision();
 		    currentNode=selectedNode;
             SelectNode.spacesLeft++;
             if (pila.Count == 1){
@@ -337,7 +335,7 @@ public class Saviour : MonoBehaviour {
         switch(selectedNode){
             case 1: case 2: case 3: case 4: {
                 //agent.speed = 10;
-                agent.speed = 5;
+                agent.speed = 10;
                 break;
             }
             default: {
@@ -352,6 +350,7 @@ public class Saviour : MonoBehaviour {
 
     public void MoveBack(){
         selectedNode = oldNode;
+        AvoidCollision();
         NodesMap.DisplayCurrentNode(selectedNode);
         currentNode = selectedNode;
         oldNode = pila[pila.Count - 2];
@@ -359,6 +358,40 @@ public class Saviour : MonoBehaviour {
 		SelectNode.spacesLeft++;
         Move();
     }
+
+    /// <summary>
+	/// Ensures that more than one saviour is not on the same spot at the same time.
+	/// </summary>  
+	public void AvoidCollision(){
+		GameObject characters = GameObject.FindGameObjectWithTag("Characters");
+		if (characters){
+			// - 1 porque tenemos al ShopKeeper.
+			for (int i = 0; i < characters.transform.childCount - 1; i++){
+				GameObject spawnedCharacter = characters.transform.GetChild(i).gameObject;
+				if(gameManagerDelJuego.playerDictionary.ContainsValue(i+1)){
+					Saviour saviour = spawnedCharacter.GetComponent<Saviour>();
+                    if (saviour.currentNode == selectedNode){
+                        spawnedCharacter.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+                        float angle = i*Mathf.PI/2;
+                        float x = NodesMap.nodesPosition[saviour.currentNode].x + Mathf.Cos(angle);
+                        float y = NodesMap.nodesPosition[saviour.currentNode].y;
+                        float z = NodesMap.nodesPosition[saviour.currentNode].z + Mathf.Sin(angle);
+                        Vector3 target = new Vector3(x, y, z);
+                        if (gameManagerDelJuego.loseFight){
+                            saviour.transform.position = target;
+                        }
+                        else{
+                            saviour.agent.SetDestination(target);
+                        }
+                        
+                    }
+                    else {
+                        spawnedCharacter.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+                    }
+				}
+			}
+		}
+	}
 
     
 }

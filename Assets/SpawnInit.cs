@@ -75,6 +75,7 @@ public class SpawnInit : MonoBehaviour {
 			script.maxExp = player.maxExp;
 			script.money = player.money;
 			script.turnsToSkip = player.turnsToSkip;
+			script.onDuty = player.onDuty;
 			script.fans = player.fans;
 			script.gender = player.gender;
 			script.items = player.items;

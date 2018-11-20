@@ -24,8 +24,8 @@ public class CargadorDeEscenas : MonoBehaviour {
         "Level 3",
         "Level 4",
         "Continent",
-        "Main characters pro",
-        "Navigation Mesh"
+        "Navigation Mesh",
+        "Main characters pro"
     };
 
     public void Start() {
@@ -38,7 +38,7 @@ public class CargadorDeEscenas : MonoBehaviour {
     public void Update() {
                      rotationEulerParaImagen += Vector3.forward * rotacionGrados * Time.deltaTime;
                 rotacionGrados += 30;
-                ImagenCargando.transform.rotation = Quaternion.Euler(rotationEulerParaImagen);//aplicando el giro  a la imagen
+                ImagenCargando.transform.rotation = Quaternion.Euler(rotationEulerParaImagen);//aplicando el giro a la imagen
     }
 
     public IEnumerator BackToMainGame(){
@@ -50,9 +50,47 @@ public class CargadorDeEscenas : MonoBehaviour {
         if (vcam1){
             vcam1.SetActive(false);
         }
+        GameObject factory = GameObject.FindGameObjectWithTag("factory");
+        if (factory){
+            factory.SetActive(false);
+        }
+
+        BuildBridges();
+
+        // Aquí se decide qué ocurre después de regresa de una pelea
+        // Puede poner un nodo en dorado si ganó una fábrica
+        // o puede mandarlo al hospital, si es que perdió
+        if (gameManagerDelJuego.wonBossFigth){
+            gameManagerDelJuego.wonBossFigth = false;
+            yield return StartCoroutine(SelectNode.ChangeNodeMaterial());
+        }
+        if (gameManagerDelJuego.loseFight){
+            yield return StartCoroutine(SelectNode.SendToHospital());
+        }
         yield return StartCoroutine(SelectNode.LoadNextPlayer());
     }
 
+    private void BuildBridges(){
+        foreach (KeyValuePair<int, bool> entry in gameManagerDelJuego.areaCleared) {
+			if (gameManagerDelJuego.areaCleared[entry.Key] != false){
+                GameObject bridges = GameObject.Find("Bridges");
+                if (bridges){
+                    bridges.transform.GetChild(entry.Key-1).gameObject.SetActive(true);
+                }
+                GameObject bridgeLinks = GameObject.Find("BridgeLinks");
+                if (bridgeLinks){
+                    bridgeLinks.transform.GetChild(entry.Key-1).gameObject.SetActive(true);
+                }
+            }
+        }
+        foreach (KeyValuePair<int, int> entry in gameManagerDelJuego.bossWinners) {
+			if (gameManagerDelJuego.bossWinners[entry.Key] != 0){
+                GameObject factory = GameObject.Find("Factory"+entry.Key);
+                factory.transform.GetChild(0).gameObject.SetActive(false);
+                factory.transform.GetChild(1).gameObject.SetActive(true);
+            }
+        }
+    }
 
     IEnumerator AsynchronousLoad(string escena)
     {
@@ -85,7 +123,7 @@ public class CargadorDeEscenas : MonoBehaviour {
                     yield return null; }
 
                 // Main Characters Pro has done loading and is active
-                if (i==6 && sceneLoads[i].isDone && !gameManagerDelJuego.firstLoadMainScene) {
+                if (i==7 && sceneLoads[i].isDone && !gameManagerDelJuego.firstLoadMainScene) {
                     yield return StartCoroutine(BackToMainGame());
                 }
             }

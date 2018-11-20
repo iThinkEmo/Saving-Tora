@@ -61,7 +61,7 @@ public class BuyStuff : MonoBehaviour {
 		saviour = gameManagerDelJuego.GetCurrentSaviour();
 
 		WealthText.GetComponent<Text>().text = "wealth: " + player.money;
-		DialogText.GetComponent<Text>().text = "Hi, I'm <Insert name>. What do you want to buy?";
+		DialogText.GetComponent<Text>().text = "Hi!\n What do you need?";
 
 		stuff = "";
 		nivel = player.lv;

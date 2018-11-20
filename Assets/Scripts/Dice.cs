@@ -9,6 +9,8 @@ public class Dice : MonoBehaviour{
 	public Animator anim;
 	public static int side;
 
+	private static bool firstToss = true;
+
 	private bool rolling = true;
 
 	public static bool finishedBouncing;
@@ -37,12 +39,20 @@ public class Dice : MonoBehaviour{
 
 	void TossDice() {
 		gameManagerDelJuego.BanderaYaSeDecidioCurrentPlayer = true;
-		gameManagerDelJuego.changedScene = true;
+		// gameManagerDelJuego.changedScene = true;
 
 		int currentPlayer = gameManagerDelJuego.GetCurrentPlayer();
 		string character = gameManagerDelJuego.idCharacter[currentPlayer];
 		string characterArm = character.ToLower()+"Arm";
-		LookAt.LookAtNextCharacter(character, characterArm);
+		
+		if (firstToss){
+			firstToss = false;
+			LookAt.LookAtNextCharacter(character, characterArm);
+		}
+
+		if(gameManagerDelJuego.changedScene){
+			gameManagerDelJuego.changedScene = false;
+		}
 
 		GameObject nodesType = GameObject.FindGameObjectWithTag("nodesType");
 		if (nodesType){
@@ -56,8 +66,9 @@ public class Dice : MonoBehaviour{
 		int side = Random.Range(1, 7);
 		anim.SetInteger("side", side);
 
-		// SelectNode.spacesLeft = side;
-		SelectNode.spacesLeft = 2;
+		SelectNode.spacesLeft = side;
+		// SelectNode.spacesLeft = 12;
+		// SelectNode.spacesLeft = 505;
 
 		Vector3 force = Vector3.up * Random.Range(360.0f, 380.0f);
 		rb.AddForce(force);

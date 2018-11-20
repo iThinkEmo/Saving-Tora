@@ -92,17 +92,16 @@ public class EnemyClass
     public float HPPercentage()
     {
         float lol = (float)this.hp / this.maxHp;
-        //Debug.Log(lol);
         return lol;
     }
 
-    //Tony
+    //To initalize enemies
     public EnemyClass(int i)
     {
-        InitializeEnemy(i);
+        InitializeEnemy(i+1);
     }
 
-    //1 tony, 2 theEye (MORE TO COME)
+    //(Eyes,LILRobots, Turrets, Crocs, LAMEBots)
     public void InitializeEnemy(int i)
     {
         switch (i)
@@ -111,41 +110,154 @@ public class EnemyClass
                 ForInit();
                 break;
             case 1:
-                Tony();
+                Eyes(1);
                 break;
             case 2:
-                TheEye();
+                Eyes(2);
                 break;
             case 3:
+                Eyes(3);
                 break;
             case 4:
+                Eyes(4);
+                break;
+            case 5:
+                Robotos(1);
+                break;
+            case 6:
+                Robotos(2);
+                break;
+            case 7:
+                Robotos(3);
+                break;
+            case 8:
+                Robotos(4);
+                break;
+            case 9:
+                Turrets(1);
+                break;
+            case 10:
+                Turrets(2);
+                break;
+            case 11:
+                Turrets(3);
+                break;
+            case 12:
+                Turrets(4);
+                break;
+            case 13:
+                Crocs(1);
+                break;
+            case 14:
+                Crocs(2);
+                break;
+            case 15:
+                Crocs(3);
+                break;
+            case 16:
+                Crocs(4);
+                break;
+            case 17:
+                Lames(1);
+                break;
+            case 18:
+                Lames(2);
+                break;
+            case 19:
+                Lames(3);
+                break;
+            case 20:
+                Lames(4);
+                break;
+            case 21:
+                Bosses(1);
+                break;
+            case 22:
+                Bosses(2);
+                break;
+            case 23:
+                Bosses(3);
+                break;
+            case 24:
+                Bosses(4);
+                break;
+            case 25:
+                Bosses(5);
+                break;
+            case 26:
+                Bosses(7);
                 break;
             default:
                 break;
         }
     }
 
-    public void Tony()
+    public void Eyes(int enemynum)
     {
-        maxHp = 40;
-        hp = 40;
-        mp = 0;
-        ap = 10;
-        dp = 10;
-        sp = 6;
-        moNo = 1;
+        maxHp = 30 * enemynum;
+        hp = 30 * enemynum;
+        mp = 20 * enemynum;
+        ap = 5 * enemynum;
+        dp = 5 * enemynum;
+        sp = 6 * enemynum;
+        moNo = enemynum;
     }
 
-    public void TheEye()
+    public void Robotos(int enemynum)
     {
-        maxHp = 30;
-        hp = 30;
-        mp = 20;
-        ap = 5;
-        dp = 5;
-        sp = 6;
-        moNo = 2;
+        maxHp = 20 * enemynum;
+        hp = 20 * enemynum;
+        mp = 0 * enemynum;
+        ap = 25  * enemynum;
+        dp = 0  * enemynum;
+        sp = 30  * enemynum;
+        moNo = enemynum+4;
     }
+
+    public void Turrets(int enemynum)
+    {
+        maxHp = 40 * enemynum;
+        hp = 40 * enemynum;
+        mp = 2 * enemynum;
+        ap = 5  * enemynum;
+        dp = 5  * enemynum;
+        sp = 0  * enemynum;
+        moNo = enemynum+8;
+    }
+
+    public void Crocs(int enemynum)
+    {
+        maxHp = 40 * enemynum;
+        hp = 40 * enemynum;
+        mp = 0 * enemynum;
+        ap = 10 * enemynum;
+        dp = 10 * enemynum;
+        sp = 6 * enemynum;
+        moNo = enemynum + 12;
+    }
+
+    public void Lames(int enemynum)
+    {
+        maxHp = 20 * enemynum;
+        hp = 20 * enemynum;
+        mp = 20 * enemynum;
+        ap = 25 * enemynum;
+        dp = 25 * enemynum;
+        sp = 26 * enemynum;
+        moNo = enemynum + 16;
+    }
+
+    public void Bosses(int enemynum)
+    {
+        maxHp = 150 * enemynum;
+        hp = 150 * enemynum;
+        mp = 60 * enemynum;
+        ap = 60 * enemynum;
+        dp = 50 * enemynum;
+        sp = 50 * enemynum;
+        moNo = 20 +enemynum;
+    }
+
 
     public void ForInit()
     {

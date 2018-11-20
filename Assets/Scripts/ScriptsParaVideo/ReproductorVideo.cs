@@ -4,8 +4,11 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Video;
+using System.IO;
+using UnityEditor;
 
 //Autor: Irvin Emmanuel Trujillo Díaz
+//EDITOR: KARLO
 public class ReproductorVideo : MonoBehaviour {
 
     //Atributos publicos que seran asignados desde la GUI.
@@ -18,13 +21,30 @@ public class ReproductorVideo : MonoBehaviour {
     private GameManager gameManagerDelJuego;
     void Start()
     {
+        if (Directory.Exists(Application.persistentDataPath + "/"+ "save0"))
+        {
+            Debug.Log("Existe el directorio");
+            Debug.Log(Application.persistentDataPath + "/" + "save0");
+        }
+        else
+        {
+            System.IO.Directory.CreateDirectory(Application.persistentDataPath + "/" + "save0");
+            System.IO.Directory.CreateDirectory(Application.persistentDataPath + "/" + "save1");
+            Debug.Log(Application.persistentDataPath + "/" + "save0");
+            Debug.Log(Application.persistentDataPath + "/" + "save1");
+        }
         StartCoroutine(PlayVideo());
+    }
+
+    public void CreateSaveFolders()
+    {
+
     }
 
     IEnumerator PlayVideo()
     {
         reproductorVideo.Prepare();
-        WaitForSeconds waitForSeconds = new WaitForSeconds(1); //1 segundo
+        WaitForSeconds waitForSeconds = new WaitForSeconds(2); //1 segundo
         while (!reproductorVideo.isPrepared)
         {
             yield return waitForSeconds; //esperando 1 segundo, con yield permite la espera y reunuda,el break rompera el ciclo

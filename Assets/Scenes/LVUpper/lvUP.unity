@@ -1704,14 +1704,15 @@ MonoBehaviour:
   playerIcons:
   - {fileID: 21300000, guid: 3063ecaf016e69a4f96f58cdbe090768, type: 3}
   - {fileID: 21300000, guid: be32afc92a4f5f343bae5f0a24fb2a31, type: 3}
-  - {fileID: 21300000, guid: b2edbb87b8e907e4c903f8fcafc9def6, type: 3}
   - {fileID: 21300000, guid: 8eff5fb652c4b854780821067b9f47d8, type: 3}
   - {fileID: 21300000, guid: 7669314e61b7859459dc80ff3708160f, type: 3}
+  - {fileID: 21300000, guid: b2edbb87b8e907e4c903f8fcafc9def6, type: 3}
   deadman: {fileID: 984138505}
   dialogText: {fileID: 655548384}
   playerExp: {fileID: 1551118429}
   playerLevel: {fileID: 410185705}
   theNurse: {fileID: 561531873}
+  theOKButton: {fileID: 1936590475}
 --- !u!1 &1901451751
 GameObject:
   m_ObjectHideFlags: 0
